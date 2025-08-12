@@ -1,0 +1,92 @@
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const settings = pgTable("settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siteTitle: text("site_title").notNull().default("Cek Kupon Undian"),
+  logoUrl: text("logo_url"),
+  bannerUrl: text("banner_url"),
+  adminWhatsApp: text("admin_whatsapp"),
+  mapsLink: text("maps_link"),
+  termsAndConditions: text("terms_and_conditions"),
+  winnerMessage: text("winner_message").default("Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const prizes = pgTable("prizes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  bannerUrl: text("banner_url"),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const participants = pgTable("participants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  couponNumber: text("coupon_number").notNull().unique(),
+  prizeId: varchar("prize_id").references(() => prizes.id),
+  isWinner: boolean("is_winner").default(false),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const submissions = pgTable("submissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  couponNumber: text("coupon_number").notNull(),
+  fullName: text("full_name").notNull(),
+  whatsappNumber: text("whatsapp_number").notNull(),
+  isWinner: boolean("is_winner").default(false),
+  prizeId: varchar("prize_id").references(() => prizes.id),
+  prizeName: text("prize_name"),
+  submittedAt: timestamp("submitted_at").defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  email: true,
+  password: true,
+});
+
+export const insertSettingsSchema = createInsertSchema(settings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertPrizeSchema = createInsertSchema(prizes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertParticipantSchema = createInsertSchema(participants).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSubmissionSchema = createInsertSchema(submissions).omit({
+  id: true,
+  submittedAt: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertSettings = z.infer<typeof insertSettingsSchema>;
+export type Settings = typeof settings.$inferSelect;
+export type InsertPrize = z.infer<typeof insertPrizeSchema>;
+export type Prize = typeof prizes.$inferSelect;
+export type InsertParticipant = z.infer<typeof insertParticipantSchema>;
+export type Participant = typeof participants.$inferSelect;
+export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
+export type Submission = typeof submissions.$inferSelect;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Settings } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -23,20 +23,21 @@ export default function ProfileSettings() {
 
   const { data: settings, isLoading } = useQuery<Settings>({
     queryKey: ["/api/settings"],
-    onSuccess: (data) => {
-      if (data) {
-        setFormData({
-          siteTitle: data.siteTitle || "",
-          logoUrl: data.logoUrl || "",
-          bannerUrl: data.bannerUrl || "",
-          adminWhatsApp: data.adminWhatsApp || "",
-          mapsLink: data.mapsLink || "",
-          termsAndConditions: data.termsAndConditions || "",
-          winnerMessage: data.winnerMessage || "",
-        });
-      }
-    }
   });
+
+  useEffect(() => {
+    if (settings) {
+      setFormData({
+        siteTitle: settings.siteTitle || "",
+        logoUrl: settings.logoUrl || "",
+        bannerUrl: settings.bannerUrl || "",
+        adminWhatsApp: settings.adminWhatsApp || "",
+        mapsLink: settings.mapsLink || "",
+        termsAndConditions: settings.termsAndConditions || "",
+        winnerMessage: settings.winnerMessage || "",
+      });
+    }
+  }, [settings]);
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -58,6 +59,23 @@ export default function ProfileSettings() {
       });
     },
   });
+
+  const handleFileUpload = (field: 'logoUrl' | 'bannerUrl') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setFormData(prev => ({ ...prev, [field]: reader.result as string }));
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,31 +123,57 @@ export default function ProfileSettings() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <Label htmlFor="logoUrl">URL Logo</Label>
-          <Input
-            id="logoUrl"
-            type="url"
-            value={formData.logoUrl}
-            onChange={(e) => setFormData(prev => ({ ...prev, logoUrl: e.target.value }))}
-            placeholder="https://example.com/logo.png"
-          />
-          <p className="text-sm text-gray-600 mt-1">
-            Upload gambar ke layanan hosting dan masukkan URL-nya
-          </p>
+          <Label>Logo</Label>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                value={formData.logoUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, logoUrl: e.target.value }))}
+                placeholder="https://example.com/logo.png"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleFileUpload('logoUrl')}
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+            </div>
+            {formData.logoUrl && (
+              <div className="mt-2">
+                <img src={formData.logoUrl} alt="Logo Preview" className="w-16 h-16 object-cover rounded" />
+              </div>
+            )}
+          </div>
         </div>
 
         <div>
-          <Label htmlFor="bannerUrl">URL Banner</Label>
-          <Input
-            id="bannerUrl"
-            type="url"
-            value={formData.bannerUrl}
-            onChange={(e) => setFormData(prev => ({ ...prev, bannerUrl: e.target.value }))}
-            placeholder="https://example.com/banner.png"
-          />
-          <p className="text-sm text-gray-600 mt-1">
-            Upload gambar ke layanan hosting dan masukkan URL-nya
-          </p>
+          <Label>Banner</Label>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                value={formData.bannerUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, bannerUrl: e.target.value }))}
+                placeholder="https://example.com/banner.png"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleFileUpload('bannerUrl')}
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+            </div>
+            {formData.bannerUrl && (
+              <div className="mt-2">
+                <img src={formData.bannerUrl} alt="Banner Preview" className="w-32 h-20 object-cover rounded" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

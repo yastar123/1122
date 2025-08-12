@@ -6,7 +6,7 @@ import createMemoryStore from "memorystore";
 const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
   
   // User methods
   getUser(id: string): Promise<User | undefined>;
@@ -45,7 +45,7 @@ export class MemStorage implements IStorage {
   private prizes: Map<string, Prize>;
   private participants: Map<string, Participant>;
   private submissions: Map<string, Submission>;
-  public sessionStore: session.SessionStore;
+  public sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
@@ -56,6 +56,12 @@ export class MemStorage implements IStorage {
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000,
     });
+    
+    // Initialize default admin user
+    this.initializeDefaultAdmin();
+    
+    // Initialize dummy data for testing
+    this.initializeDummyData();
     
     // Initialize default settings
     this.settings = {
@@ -78,6 +84,129 @@ Langkah - langkah:
       winnerMessage: "Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)",
       updatedAt: new Date(),
     };
+  }
+
+  private async initializeDefaultAdmin() {
+    // Create default admin user with specified credentials
+    const { scrypt, randomBytes } = await import("crypto");
+    const { promisify } = await import("util");
+    const scryptAsync = promisify(scrypt);
+    
+    const salt = randomBytes(16).toString("hex");
+    const buf = (await scryptAsync("admin123", salt, 64)) as Buffer;
+    const hashedPassword = `${buf.toString("hex")}.${salt}`;
+    
+    const adminId = randomUUID();
+    const adminUser: User = {
+      id: adminId,
+      username: "admin",
+      email: "admin@gmail.com",
+      password: hashedPassword,
+      createdAt: new Date(),
+    };
+    
+    this.users.set(adminId, adminUser);
+  }
+
+  private async initializeDummyData() {
+    // Add dummy prizes
+    const prizes = [
+      {
+        name: "TUMBLR",
+        description: "Tumblr cantik untuk hadiah juara",
+        bannerUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
+        startDate: new Date("2024-08-01"),
+        endDate: new Date("2024-12-31"),
+        isActive: true
+      },
+      {
+        name: "HOODIE",
+        description: "Hoodie premium berkualitas tinggi",
+        bannerUrl: "https://images.unsplash.com/photo-1556821840-3a9fbc0cd826?w=300&h=200&fit=crop",
+        startDate: new Date("2024-08-01"),
+        endDate: new Date("2024-12-31"),
+        isActive: true
+      },
+      {
+        name: "TOTEBAG",
+        description: "Totebag canvas premium untuk belanja",
+        bannerUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
+        startDate: new Date("2024-08-01"),
+        endDate: new Date("2024-12-31"),
+        isActive: true
+      }
+    ];
+
+    const prizeIds: string[] = [];
+    for (const prize of prizes) {
+      const id = randomUUID();
+      prizeIds.push(id);
+      const prizeData: Prize = {
+        id,
+        name: prize.name,
+        description: prize.description,
+        bannerUrl: prize.bannerUrl,
+        startDate: prize.startDate,
+        endDate: prize.endDate,
+        isActive: prize.isActive,
+        createdAt: new Date(),
+      };
+      this.prizes.set(id, prizeData);
+    }
+
+    // Add dummy participants/winners
+    const participants = [
+      { couponNumber: "12345678", isWinner: true, prizeId: prizeIds[0], notes: "Pemenang pertama tumblr" },
+      { couponNumber: "87654321", isWinner: true, prizeId: prizeIds[1], notes: "Pemenang hoodie" },
+      { couponNumber: "11223344", isWinner: true, prizeId: prizeIds[2], notes: "Pemenang totebag" },
+      { couponNumber: "55667788", isWinner: false, prizeId: null, notes: "Tidak beruntung kali ini" },
+      { couponNumber: "99887766", isWinner: false, prizeId: null, notes: "Coba lagi" },
+      { couponNumber: "44556677", isWinner: true, prizeId: prizeIds[0], notes: "Pemenang tumblr kedua" },
+      { couponNumber: "33445566", isWinner: false, prizeId: null, notes: null },
+      { couponNumber: "22334455", isWinner: true, prizeId: prizeIds[1], notes: "Pemenang hoodie kedua" },
+    ];
+
+    for (const participant of participants) {
+      const id = randomUUID();
+      const participantData: Participant = {
+        id,
+        couponNumber: participant.couponNumber,
+        isWinner: participant.isWinner,
+        prizeId: participant.prizeId,
+        notes: participant.notes,
+        createdAt: new Date(),
+      };
+      this.participants.set(id, participantData);
+    }
+
+    // Add dummy submissions (user form submissions)
+    const submissions = [
+      { couponNumber: "12345678", fullName: "Budi Santoso", whatsappNumber: "081234567890", isWinner: true, prizeId: prizeIds[0], prizeName: "TUMBLR" },
+      { couponNumber: "87654321", fullName: "Siti Nurhaliza", whatsappNumber: "081234567891", isWinner: true, prizeId: prizeIds[1], prizeName: "HOODIE" },
+      { couponNumber: "11223344", fullName: "Ahmad Rahman", whatsappNumber: "081234567892", isWinner: true, prizeId: prizeIds[2], prizeName: "TOTEBAG" },
+      { couponNumber: "55667788", fullName: "Maya Sari", whatsappNumber: "081234567893", isWinner: false, prizeId: null, prizeName: null },
+      { couponNumber: "99887766", fullName: "Dani Wijaya", whatsappNumber: "081234567894", isWinner: false, prizeId: null, prizeName: null },
+      { couponNumber: "44556677", fullName: "Rina Kusuma", whatsappNumber: "081234567895", isWinner: true, prizeId: prizeIds[0], prizeName: "TUMBLR" },
+      { couponNumber: "33445566", fullName: "Agus Pratama", whatsappNumber: "081234567896", isWinner: false, prizeId: null, prizeName: null },
+      { couponNumber: "22334455", fullName: "Lina Dewi", whatsappNumber: "081234567897", isWinner: true, prizeId: prizeIds[1], prizeName: "HOODIE" },
+      { couponNumber: "98765432", fullName: "Rudi Hartono", whatsappNumber: "081234567898", isWinner: false, prizeId: null, prizeName: null },
+      { couponNumber: "13579246", fullName: "Dewi Lestari", whatsappNumber: "081234567899", isWinner: false, prizeId: null, prizeName: null },
+    ];
+
+    for (const submission of submissions) {
+      const id = randomUUID();
+      const submissionData: Submission = {
+        id,
+        couponNumber: submission.couponNumber,
+        fullName: submission.fullName,
+        whatsappNumber: submission.whatsappNumber,
+        isWinner: submission.isWinner,
+        prizeId: submission.prizeId,
+        prizeName: submission.prizeName,
+        submittedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random time within last week
+      };
+      this.submissions.set(id, submissionData);
+    }
   }
 
   // User methods
@@ -116,10 +245,16 @@ Langkah - langkah:
   async updateSettings(newSettings: InsertSettings): Promise<Settings> {
     this.settings = {
       id: this.settings?.id || randomUUID(),
-      ...newSettings,
+      siteTitle: newSettings.siteTitle || this.settings?.siteTitle || "Cek Kupon Undian",
+      logoUrl: newSettings.logoUrl !== undefined ? newSettings.logoUrl : this.settings?.logoUrl || null,
+      bannerUrl: newSettings.bannerUrl !== undefined ? newSettings.bannerUrl : this.settings?.bannerUrl || null,
+      adminWhatsApp: newSettings.adminWhatsApp !== undefined ? newSettings.adminWhatsApp : this.settings?.adminWhatsApp || null,
+      mapsLink: newSettings.mapsLink !== undefined ? newSettings.mapsLink : this.settings?.mapsLink || null,
+      termsAndConditions: newSettings.termsAndConditions !== undefined ? newSettings.termsAndConditions : this.settings?.termsAndConditions || null,
+      winnerMessage: newSettings.winnerMessage !== undefined ? newSettings.winnerMessage : this.settings?.winnerMessage || null,
       updatedAt: new Date(),
     };
-    return this.settings;
+    return this.settings!;
   }
 
   // Prize methods
@@ -136,8 +271,13 @@ Langkah - langkah:
   async createPrize(insertPrize: InsertPrize): Promise<Prize> {
     const id = randomUUID();
     const prize: Prize = {
-      ...insertPrize,
       id,
+      name: insertPrize.name,
+      description: insertPrize.description || null,
+      bannerUrl: insertPrize.bannerUrl || null,
+      startDate: insertPrize.startDate,
+      endDate: insertPrize.endDate,
+      isActive: insertPrize.isActive || null,
       createdAt: new Date(),
     };
     this.prizes.set(id, prize);
@@ -178,8 +318,11 @@ Langkah - langkah:
   async createParticipant(insertParticipant: InsertParticipant): Promise<Participant> {
     const id = randomUUID();
     const participant: Participant = {
-      ...insertParticipant,
       id,
+      couponNumber: insertParticipant.couponNumber,
+      isWinner: insertParticipant.isWinner || null,
+      prizeId: insertParticipant.prizeId || null,
+      notes: insertParticipant.notes || null,
       createdAt: new Date(),
     };
     this.participants.set(id, participant);
@@ -210,8 +353,13 @@ Langkah - langkah:
   async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
     const id = randomUUID();
     const submission: Submission = {
-      ...insertSubmission,
       id,
+      couponNumber: insertSubmission.couponNumber,
+      fullName: insertSubmission.fullName,
+      whatsappNumber: insertSubmission.whatsappNumber,
+      isWinner: insertSubmission.isWinner || null,
+      prizeId: insertSubmission.prizeId || null,
+      prizeName: insertSubmission.prizeName || null,
       submittedAt: new Date(),
     };
     this.submissions.set(id, submission);

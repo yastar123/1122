@@ -33,8 +33,8 @@ export default function PrizeManagement() {
     mutationFn: async (data: typeof formData) => {
       const res = await apiRequest("POST", "/api/prizes", {
         ...data,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
+        startDate: new Date(data.startDate).toISOString(),
+        endDate: new Date(data.endDate).toISOString(),
       });
       return await res.json();
     },
@@ -59,8 +59,8 @@ export default function PrizeManagement() {
   const updatePrizeMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<typeof formData> }) => {
       const updateData = { ...data };
-      if (data.startDate) updateData.startDate = new Date(data.startDate);
-      if (data.endDate) updateData.endDate = new Date(data.endDate);
+      if (data.startDate) updateData.startDate = new Date(data.startDate).toISOString();
+      if (data.endDate) updateData.endDate = new Date(data.endDate).toISOString();
       
       const res = await apiRequest("PUT", `/api/prizes/${id}`, updateData);
       return await res.json();
@@ -140,6 +140,10 @@ export default function PrizeManagement() {
 
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleString("id-ID");
+  };
+
+  const formatDateForInput = (date: Date | string) => {
+    return new Date(date).toISOString().slice(0, 16);
   };
 
   if (isLoading) {
@@ -283,7 +287,7 @@ export default function PrizeManagement() {
                     {editingPrize?.id === prize.id ? (
                       <Input
                         type="datetime-local"
-                        defaultValue={new Date(prize.startDate).toISOString().slice(0, 16)}
+                        defaultValue={formatDateForInput(prize.startDate)}
                         onBlur={(e) => handleUpdate("startDate", e.target.value)}
                         className="max-w-40"
                       />
@@ -295,7 +299,7 @@ export default function PrizeManagement() {
                     {editingPrize?.id === prize.id ? (
                       <Input
                         type="datetime-local"
-                        defaultValue={new Date(prize.endDate).toISOString().slice(0, 16)}
+                        defaultValue={formatDateForInput(prize.endDate)}
                         onBlur={(e) => handleUpdate("endDate", e.target.value)}
                         className="max-w-40"
                       />

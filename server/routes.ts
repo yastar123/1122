@@ -177,6 +177,7 @@ export function registerRoutes(app: Express): Server {
       // Check if coupon exists as a prize coupon number
       const prizes = await storage.getAllPrizes();
       const currentDate = new Date();
+      
       const matchingPrize = prizes.find(prize => 
         prize.couponNumber === submissionData.couponNumber && 
         prize.isActive &&

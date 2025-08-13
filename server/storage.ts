@@ -391,4 +391,6 @@ Langkah - langkah:
   }
 }
 
-export const storage = new MemStorage();
+import { DatabaseStorage } from "./db-storage";
+
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

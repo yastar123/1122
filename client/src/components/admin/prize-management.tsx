@@ -18,6 +18,7 @@ export default function PrizeManagement() {
   const [editingPrize, setEditingPrize] = useState<Prize | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    couponNumber: "",
     description: "",
     bannerUrl: "",
     startDate: "",
@@ -105,6 +106,7 @@ export default function PrizeManagement() {
   const resetForm = () => {
     setFormData({
       name: "",
+      couponNumber: "",
       description: "",
       bannerUrl: "",
       startDate: "",
@@ -176,6 +178,18 @@ export default function PrizeManagement() {
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Contoh: TUMBLR"
                   required
+                  data-testid="input-prize-name"
+                />
+              </div>
+
+              <div>
+                <Label>Nomor Kupon</Label>
+                <Input
+                  value={formData.couponNumber}
+                  onChange={(e) => setFormData(prev => ({ ...prev, couponNumber: e.target.value }))}
+                  placeholder="Contoh: TUM001"
+                  required
+                  data-testid="input-coupon-number"
                 />
               </div>
               
@@ -185,6 +199,7 @@ export default function PrizeManagement() {
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Deskripsi hadiah..."
+                  data-testid="textarea-description"
                 />
               </div>
               
@@ -246,6 +261,7 @@ export default function PrizeManagement() {
           <TableHeader>
             <TableRow>
               <TableHead>Nama Hadiah</TableHead>
+              <TableHead>Nomor Kupon</TableHead>
               <TableHead>Banner</TableHead>
               <TableHead>Tanggal Mulai</TableHead>
               <TableHead>Tanggal Selesai</TableHead>
@@ -256,7 +272,7 @@ export default function PrizeManagement() {
           <TableBody>
             {prizes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                   Belum ada hadiah. Tambah hadiah pertama Anda.
                 </TableCell>
               </TableRow>
@@ -269,9 +285,22 @@ export default function PrizeManagement() {
                         defaultValue={prize.name}
                         onBlur={(e) => handleUpdate("name", e.target.value)}
                         className="max-w-32"
+                        data-testid={`input-edit-name-${prize.id}`}
                       />
                     ) : (
                       <span className="font-medium">{prize.name}</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingPrize?.id === prize.id ? (
+                      <Input
+                        defaultValue={prize.couponNumber}
+                        onBlur={(e) => handleUpdate("couponNumber", e.target.value)}
+                        className="max-w-32"
+                        data-testid={`input-edit-coupon-${prize.id}`}
+                      />
+                    ) : (
+                      <span className="font-mono font-medium text-blue-600">{prize.couponNumber}</span>
                     )}
                   </TableCell>
                   <TableCell>

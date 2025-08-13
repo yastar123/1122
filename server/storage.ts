@@ -116,6 +116,7 @@ Langkah - langkah:
     const prizes = [
       {
         name: "TUMBLR",
+        couponNumber: "TUM001",
         description: "Tumblr cantik untuk hadiah juara",
         bannerUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
         startDate: new Date("2024-08-01"),
@@ -124,6 +125,7 @@ Langkah - langkah:
       },
       {
         name: "HOODIE",
+        couponNumber: "HOO001",
         description: "Hoodie premium berkualitas tinggi",
         bannerUrl: "https://images.unsplash.com/photo-1556821840-3a9fbc0cd826?w=300&h=200&fit=crop",
         startDate: new Date("2024-08-01"),
@@ -132,6 +134,7 @@ Langkah - langkah:
       },
       {
         name: "TOTEBAG",
+        couponNumber: "TOT001",
         description: "Totebag canvas premium untuk belanja",
         bannerUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
         startDate: new Date("2024-08-01"),
@@ -147,6 +150,7 @@ Langkah - langkah:
       const prizeData: Prize = {
         id,
         name: prize.name,
+        couponNumber: prize.couponNumber,
         description: prize.description,
         bannerUrl: prize.bannerUrl,
         startDate: prize.startDate,
@@ -279,6 +283,7 @@ Langkah - langkah:
     const prize: Prize = {
       id,
       name: insertPrize.name,
+      couponNumber: insertPrize.couponNumber,
       description: insertPrize.description || null,
       bannerUrl: insertPrize.bannerUrl || null,
       startDate: insertPrize.startDate,

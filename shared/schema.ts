@@ -29,6 +29,7 @@ export const settings = pgTable("settings", {
 export const prizes = pgTable("prizes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
+  couponNumber: text("coupon_number").notNull().unique(),
   description: text("description"),
   bannerUrl: text("banner_url"),
   startDate: timestamp("start_date").notNull(),

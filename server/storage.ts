@@ -163,14 +163,14 @@ Langkah - langkah:
 
     // Add dummy participants/winners
     const participants = [
-      { couponNumber: "12345678", isWinner: true, prizeId: prizeIds[0], notes: "Pemenang pertama tumblr" },
-      { couponNumber: "87654321", isWinner: true, prizeId: prizeIds[1], notes: "Pemenang hoodie" },
-      { couponNumber: "11223344", isWinner: true, prizeId: prizeIds[2], notes: "Pemenang totebag" },
-      { couponNumber: "55667788", isWinner: false, prizeId: null, notes: "Tidak beruntung kali ini" },
-      { couponNumber: "99887766", isWinner: false, prizeId: null, notes: "Coba lagi" },
-      { couponNumber: "44556677", isWinner: true, prizeId: prizeIds[0], notes: "Pemenang tumblr kedua" },
-      { couponNumber: "33445566", isWinner: false, prizeId: null, notes: null },
-      { couponNumber: "22334455", isWinner: true, prizeId: prizeIds[1], notes: "Pemenang hoodie kedua" },
+      { couponNumber: "12345678", fullName: "Budi Santoso", whatsappNumber: "081234567890", isWinner: true, prizeId: prizeIds[0], prizeName: "TUMBLR", isPrizeClaimed: false, notes: "Pemenang pertama tumblr" },
+      { couponNumber: "87654321", fullName: "Siti Nurhaliza", whatsappNumber: "081234567891", isWinner: true, prizeId: prizeIds[1], prizeName: "HOODIE", isPrizeClaimed: true, notes: "Pemenang hoodie" },
+      { couponNumber: "11223344", fullName: "Ahmad Rahman", whatsappNumber: "081234567892", isWinner: true, prizeId: prizeIds[2], prizeName: "TOTEBAG", isPrizeClaimed: false, notes: "Pemenang totebag" },
+      { couponNumber: "55667788", fullName: "Maya Sari", whatsappNumber: "081234567893", isWinner: false, prizeId: null, prizeName: null, isPrizeClaimed: false, notes: "Tidak beruntung kali ini" },
+      { couponNumber: "99887766", fullName: "Dani Wijaya", whatsappNumber: "081234567894", isWinner: false, prizeId: null, prizeName: null, isPrizeClaimed: false, notes: "Coba lagi" },
+      { couponNumber: "44556677", fullName: "Rina Kusuma", whatsappNumber: "081234567895", isWinner: true, prizeId: prizeIds[0], prizeName: "TUMBLR", isPrizeClaimed: true, notes: "Pemenang tumblr kedua" },
+      { couponNumber: "33445566", fullName: "Agus Pratama", whatsappNumber: "081234567896", isWinner: false, prizeId: null, prizeName: null, isPrizeClaimed: false, notes: null },
+      { couponNumber: "22334455", fullName: "Lina Dewi", whatsappNumber: "081234567897", isWinner: true, prizeId: prizeIds[1], prizeName: "HOODIE", isPrizeClaimed: false, notes: "Pemenang hoodie kedua" },
     ];
 
     for (const participant of participants) {
@@ -178,8 +178,12 @@ Langkah - langkah:
       const participantData: Participant = {
         id,
         couponNumber: participant.couponNumber,
+        fullName: participant.fullName,
+        whatsappNumber: participant.whatsappNumber,
         isWinner: participant.isWinner,
         prizeId: participant.prizeId,
+        prizeName: participant.prizeName,
+        isPrizeClaimed: participant.isPrizeClaimed,
         notes: participant.notes,
         createdAt: new Date(),
       };
@@ -331,8 +335,12 @@ Langkah - langkah:
     const participant: Participant = {
       id,
       couponNumber: insertParticipant.couponNumber,
+      fullName: insertParticipant.fullName,
+      whatsappNumber: insertParticipant.whatsappNumber,
       isWinner: insertParticipant.isWinner || null,
       prizeId: insertParticipant.prizeId || null,
+      prizeName: insertParticipant.prizeName || null,
+      isPrizeClaimed: insertParticipant.isPrizeClaimed || null,
       notes: insertParticipant.notes || null,
       createdAt: new Date(),
     };

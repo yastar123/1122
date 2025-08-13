@@ -21,6 +21,12 @@ Preferred communication style: Simple, everyday language.
 ✓ Updated coupon checking logic to match against prize coupon numbers
 ✓ Implemented prize banner display when user wins a coupon check
 ✓ Enhanced prize management with full CRUD for coupon numbers and banners
+✓ Completely redesigned participant management with comprehensive participant data
+✓ Added participant fields: name, WhatsApp number, entry time, notes from user submissions
+✓ Implemented prize filter functionality for participant management
+✓ Added prize claim status toggle (sudah diambil/belum diambil) for winners
+✓ Created statistics dashboard showing total participants, winners, and claim status
+✓ Integrated participant creation with coupon submission process
 
 ## System Architecture
 

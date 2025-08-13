@@ -41,8 +41,12 @@ export const prizes = pgTable("prizes", {
 export const participants = pgTable("participants", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   couponNumber: text("coupon_number").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  whatsappNumber: text("whatsapp_number").notNull(),
   prizeId: varchar("prize_id").references(() => prizes.id),
+  prizeName: text("prize_name"),
   isWinner: boolean("is_winner").default(false),
+  isPrizeClaimed: boolean("is_prize_claimed").default(false),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });

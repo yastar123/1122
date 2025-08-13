@@ -115,8 +115,15 @@ export function registerRoutes(app: Express): Server {
     }
     
     try {
+      const { prizeName } = req.query;
       const participants = await storage.getAllParticipants();
-      res.json(participants);
+      
+      // Filter by prize name if specified
+      const filteredParticipants = prizeName 
+        ? participants.filter(p => p.prizeName && p.prizeName.toLowerCase().includes((prizeName as string).toLowerCase()))
+        : participants;
+      
+      res.json(filteredParticipants);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch participants" });
     }
@@ -205,6 +212,20 @@ export function registerRoutes(app: Express): Server {
         prizeId,
         prizeName,
       });
+
+      // Create participant entry if winner or first submission for this coupon
+      const existingParticipant = await storage.getParticipantByCoupon(submissionData.couponNumber);
+      if (!existingParticipant) {
+        await storage.createParticipant({
+          couponNumber: submissionData.couponNumber,
+          fullName: submissionData.fullName,
+          whatsappNumber: submissionData.whatsappNumber,
+          isWinner,
+          prizeId,
+          prizeName,
+          isPrizeClaimed: false,
+        });
+      }
       
       res.json({
         isWinner,

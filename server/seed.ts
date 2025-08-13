@@ -6,20 +6,16 @@ export async function seedData() {
     const existingSettings = await storage.getSettings();
     if (!existingSettings) {
       await storage.updateSettings({
-        siteTitle: "ConnectPrinting Undian Kupon",
-        logoUrl: "",
-        bannerUrl: "",
-        mainTitle: "UNDIAN KUPON CONNECTPRINTING",
-        subtitleText: "Masukkan nomor kupon dan data diri Anda untuk mengecek hadiah",
-        formTitle: "Cek Nomor Kupon Anda",
-        couponPlaceholder: "Masukkan nomor kupon",
-        namePlaceholder: "Nama lengkap",
-        whatsappPlaceholder: "Nomor WhatsApp",
-        buttonText: "CEK KUPON",
-        footerText: "© 2025 ConnectPrinting. Semua hak cipta dilindungi.",
+        siteTitle: "Cek Kupon Undian",
+        logoUrl: null,
+        bannerUrl: null,
+        adminWhatsApp: "6281234567890",
+        mapsLink: null,
+        termsAndConditions: "Cara Klaim Hadiahmu*\nLangkah - langkah:\n1. Screenshot layar ini\n2. Datang ke ConnectPrinting\n3. Tunjukkan kupon fisik asli\n4. Hadiah bisa di ambil langsung\n5. Hadiah tidak bisa di kirim\n6. Berlaku s/d dokumentasi atlet GS Connect Printing\n7. Batas waktu klaim hadiah mulai 26 Agustus 22 – 7 September 22 09.00 – 16.30\n8. 1 orang 1 hadiah",
         winnerMessage: "Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)",
-        whatsappNumber: "6281234567890",
-        whatsappMessage: "Halo, saya ingin menanyakan tentang undian kupon ConnectPrinting",
+        couponPlaceholder: "Tulis Nomor kuponmu disini",
+        namePlaceholder: "Nama Lengkap",
+        whatsappPlaceholder: "Nomor Whatsapp",
       });
       console.log("Settings seeded successfully");
     }

@@ -17,7 +17,10 @@ export default function SubmissionHistory() {
   });
 
   useEffect(() => {
-    if (!submissions) return;
+    if (!submissions || submissions.length === 0) {
+      setFilteredSubmissions([]);
+      return;
+    }
     
     const filtered = submissions.filter(submission => 
       submission.couponNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||

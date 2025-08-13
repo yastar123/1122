@@ -20,6 +20,9 @@ export const settings = pgTable("settings", {
   mapsLink: text("maps_link"),
   termsAndConditions: text("terms_and_conditions"),
   winnerMessage: text("winner_message").default("Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)"),
+  couponPlaceholder: text("coupon_placeholder").default("Tulis Nomor kuponmu disini"),
+  namePlaceholder: text("name_placeholder").default("Nama Lengkap"),
+  whatsappPlaceholder: text("whatsapp_placeholder").default("Nomor Whatsapp"),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

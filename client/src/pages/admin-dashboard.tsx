@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
-import { Settings, Gift, Users, History, LogOut } from "lucide-react";
+import { Settings, Gift, Users, History, LogOut, FileText } from "lucide-react";
 import ProfileSettings from "@/components/admin/profile-settings";
 import PrizeManagement from "@/components/admin/prize-management";
 import ParticipantManagement from "@/components/admin/participant-management";
 import SubmissionHistory from "@/components/admin/submission-history";
+import PlaceholderManagement from "@/components/admin/placeholder-management";
 
 export default function AdminDashboard() {
   const { user, logoutMutation } = useAuth();
@@ -47,10 +48,14 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Profil
+            </TabsTrigger>
+            <TabsTrigger value="placeholder" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Placeholder
             </TabsTrigger>
             <TabsTrigger value="prizes" className="flex items-center gap-2">
               <Gift className="h-4 w-4" />
@@ -75,6 +80,10 @@ export default function AdminDashboard() {
                 <ProfileSettings />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="placeholder" className="space-y-6">
+            <PlaceholderManagement />
           </TabsContent>
 
           <TabsContent value="prizes" className="space-y-6">

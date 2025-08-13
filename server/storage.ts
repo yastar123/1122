@@ -82,6 +82,9 @@ Langkah - langkah:
 7. Batas waktu klaim hadiah mulai 26 Agustus 22 – 7 September 22 09.00 – 16.30
 8. 1 orang 1 hadiah`,
       winnerMessage: "Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)",
+      couponPlaceholder: "Tulis Nomor kuponmu disini",
+      namePlaceholder: "Nama Lengkap", 
+      whatsappPlaceholder: "Nomor Whatsapp",
       updatedAt: new Date(),
     };
   }
@@ -252,6 +255,9 @@ Langkah - langkah:
       mapsLink: newSettings.mapsLink !== undefined ? newSettings.mapsLink : this.settings?.mapsLink || null,
       termsAndConditions: newSettings.termsAndConditions !== undefined ? newSettings.termsAndConditions : this.settings?.termsAndConditions || null,
       winnerMessage: newSettings.winnerMessage !== undefined ? newSettings.winnerMessage : this.settings?.winnerMessage || null,
+      couponPlaceholder: newSettings.couponPlaceholder !== undefined ? newSettings.couponPlaceholder : this.settings?.couponPlaceholder || "Tulis Nomor kuponmu disini",
+      namePlaceholder: newSettings.namePlaceholder !== undefined ? newSettings.namePlaceholder : this.settings?.namePlaceholder || "Nama Lengkap",
+      whatsappPlaceholder: newSettings.whatsappPlaceholder !== undefined ? newSettings.whatsappPlaceholder : this.settings?.whatsappPlaceholder || "Nomor Whatsapp",
       updatedAt: new Date(),
     };
     return this.settings!;

@@ -27,6 +27,9 @@ Preferred communication style: Simple, everyday language.
 ✓ Added prize claim status toggle (sudah diambil/belum diambil) for winners
 ✓ Created statistics dashboard showing total participants, winners, and claim status
 ✓ Integrated participant creation with coupon submission process
+✓ Fixed Select component error in participant management interface
+✓ Enhanced participant display with proper name, WhatsApp, timestamp formatting
+✓ Added comprehensive filtering by prize name and search functionality
 
 ## System Architecture
 

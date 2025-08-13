@@ -18,12 +18,12 @@ import { formatDistanceToNow } from "date-fns";
 export default function ParticipantManagement() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [prizeFilter, setPrizeFilter] = useState("");
+  const [prizeFilter, setPrizeFilter] = useState("all");
 
   const { data: participants = [], isLoading } = useQuery<Participant[]>({
     queryKey: ["/api/participants", prizeFilter],
     queryFn: async () => {
-      const params = prizeFilter ? `?prizeName=${encodeURIComponent(prizeFilter)}` : '';
+      const params = prizeFilter && prizeFilter !== "all" ? `?prizeName=${encodeURIComponent(prizeFilter)}` : '';
       const res = await fetch(`/api/participants${params}`);
       if (!res.ok) throw new Error('Failed to fetch participants');
       return res.json();
@@ -123,7 +123,7 @@ export default function ParticipantManagement() {
               <SelectValue placeholder="Filter berdasarkan hadiah" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Semua hadiah</SelectItem>
+              <SelectItem value="all">Semua hadiah</SelectItem>
               {uniquePrizeNames.map(prizeName => (
                 <SelectItem key={prizeName} value={prizeName}>
                   {prizeName}

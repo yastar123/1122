@@ -13,6 +13,8 @@ export default function ProfileSettings() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     siteTitle: "",
+    siteName: "",
+    mainHeading: "",
     logoUrl: "",
     bannerUrl: "",
     adminWhatsApp: "",
@@ -29,6 +31,8 @@ export default function ProfileSettings() {
     if (settings) {
       setFormData({
         siteTitle: settings.siteTitle || "",
+        siteName: settings.siteName || "",
+        mainHeading: settings.mainHeading || "",
         logoUrl: settings.logoUrl || "",
         bannerUrl: settings.bannerUrl || "",
         adminWhatsApp: settings.adminWhatsApp || "",
@@ -105,25 +109,62 @@ export default function ProfileSettings() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label htmlFor="siteTitle">Judul Website</Label>
-          <Input
-            id="siteTitle"
-            value={formData.siteTitle}
-            onChange={(e) => setFormData(prev => ({ ...prev, siteTitle: e.target.value }))}
-            placeholder="Cek Kupon Undian"
-          />
-        </div>
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
+          Teks Halaman Utama
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="mainHeading">Judul Utama Halaman</Label>
+            <Input
+              id="mainHeading"
+              value={formData.mainHeading}
+              onChange={(e) => setFormData(prev => ({ ...prev, mainHeading: e.target.value }))}
+              placeholder="Cek Kupon Undian"
+            />
+            <p className="text-xs text-gray-500 mt-1">Teks besar yang tampil di bagian atas</p>
+          </div>
 
-        <div>
-          <Label htmlFor="adminWhatsApp">WhatsApp Admin</Label>
-          <Input
-            id="adminWhatsApp"
-            value={formData.adminWhatsApp}
-            onChange={(e) => setFormData(prev => ({ ...prev, adminWhatsApp: e.target.value }))}
-            placeholder="wa.me/62651465165651"
-          />
+          <div>
+            <Label htmlFor="siteName">Nama Sistem/Subjudul</Label>
+            <Input
+              id="siteName"
+              value={formData.siteName}
+              onChange={(e) => setFormData(prev => ({ ...prev, siteName: e.target.value }))}
+              placeholder="Sistem Undian Kupon"
+            />
+            <p className="text-xs text-gray-500 mt-1">Teks kecil yang tampil di bawah judul utama</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
+          Pengaturan Umum
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="siteTitle">Judul Website (Tab Browser)</Label>
+            <Input
+              id="siteTitle"
+              value={formData.siteTitle}
+              onChange={(e) => setFormData(prev => ({ ...prev, siteTitle: e.target.value }))}
+              placeholder="Cek Kupon Undian"
+            />
+            <p className="text-xs text-gray-500 mt-1">Tampil di tab browser</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminWhatsApp">WhatsApp Admin</Label>
+            <Input
+              id="adminWhatsApp"
+              value={formData.adminWhatsApp}
+              onChange={(e) => setFormData(prev => ({ ...prev, adminWhatsApp: e.target.value }))}
+              placeholder="wa.me/62651465165651"
+            />
+          </div>
         </div>
       </div>
 

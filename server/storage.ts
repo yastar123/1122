@@ -90,7 +90,7 @@ export class MemStorage implements IStorage {
       siteTitle: "Cek Kupon Undian",
       logoUrl: null,
       bannerUrl: null,
-      adminWhatsApp: null,
+      adminWhatsApp: "6281234567890",
       mapsLink: null,
       termsAndConditions: `Cara Klaim Hadiahmu*
 Langkah - langkah:

@@ -4,7 +4,7 @@ export async function seedData() {
   try {
     // Check if settings already exist
     const existingSettings = await storage.getSettings();
-    if (!existingSettings) {
+    if (!existingSettings || !existingSettings.adminWhatsApp) {
       await storage.updateSettings({
         siteTitle: "Cek Kupon Undian",
         logoUrl: null,

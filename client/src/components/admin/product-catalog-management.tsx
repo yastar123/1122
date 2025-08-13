@@ -233,7 +233,10 @@ export default function ProductCatalogManagement() {
                         <Textarea 
                           placeholder="Deskripsi produk atau layanan"
                           rows={3}
-                          {...field} 
+                          value={field.value || ""} 
+                          onChange={field.onChange} 
+                          onBlur={field.onBlur}
+                          name={field.name}
                         />
                       </FormControl>
                       <FormMessage />
@@ -249,7 +252,13 @@ export default function ProductCatalogManagement() {
                       <FormItem>
                         <FormLabel>Harga</FormLabel>
                         <FormControl>
-                          <Input placeholder="Rp 50.000 - 200.000" {...field} />
+                          <Input 
+                            placeholder="Rp 50.000 - 200.000" 
+                            value={field.value || ""} 
+                            onChange={field.onChange} 
+                            onBlur={field.onBlur}
+                            name={field.name}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -263,7 +272,13 @@ export default function ProductCatalogManagement() {
                       <FormItem>
                         <FormLabel>Kategori</FormLabel>
                         <FormControl>
-                          <Input placeholder="Advertising, Sticker, Apparel" {...field} />
+                          <Input 
+                            placeholder="Advertising, Sticker, Apparel" 
+                            value={field.value || ""} 
+                            onChange={field.onChange} 
+                            onBlur={field.onBlur}
+                            name={field.name}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -282,7 +297,10 @@ export default function ProductCatalogManagement() {
                           <FormControl>
                             <Input 
                               placeholder="https://example.com/image.jpg atau upload gambar" 
-                              {...field} 
+                              value={field.value || ""} 
+                              onChange={field.onChange} 
+                              onBlur={field.onBlur}
+                              name={field.name}
                               className="flex-1"
                             />
                           </FormControl>
@@ -327,7 +345,7 @@ export default function ProductCatalogManagement() {
                         </div>
                         <FormControl>
                           <Switch
-                            checked={field.value}
+                            checked={field.value || false}
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
@@ -348,7 +366,7 @@ export default function ProductCatalogManagement() {
                         </div>
                         <FormControl>
                           <Switch
-                            checked={field.value}
+                            checked={field.value || false}
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>

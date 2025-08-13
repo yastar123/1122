@@ -273,11 +273,17 @@ export function registerRoutes(app: Express): Server {
     }
     
     try {
+      console.log("Store address request body:", JSON.stringify(req.body, null, 2));
       const validatedData = insertStoreAddressSchema.parse(req.body);
+      console.log("Store address validated data:", JSON.stringify(validatedData, null, 2));
       const storeAddress = await storage.createStoreAddress(validatedData);
       res.status(201).json(storeAddress);
     } catch (error) {
-      res.status(400).json({ message: "Invalid store address data" });
+      console.error("Store address validation error:", error);
+      res.status(400).json({ 
+        message: "Invalid store address data",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
@@ -327,11 +333,17 @@ export function registerRoutes(app: Express): Server {
     }
     
     try {
+      console.log("Product request body:", JSON.stringify(req.body, null, 2));
       const validatedData = insertProductCatalogSchema.parse(req.body);
+      console.log("Product validated data:", JSON.stringify(validatedData, null, 2));
       const product = await storage.createProduct(validatedData);
       res.status(201).json(product);
     } catch (error) {
-      res.status(400).json({ message: "Invalid product data" });
+      console.error("Product validation error:", error);
+      res.status(400).json({ 
+        message: "Invalid product data",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 

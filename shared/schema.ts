@@ -119,12 +119,22 @@ export const insertStoreAddressSchema = createInsertSchema(storeAddresses).omit(
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  phone: z.string().optional(),
+  whatsapp: z.string().optional(),
+  openingHours: z.string().optional(),
+  mapsLink: z.string().optional(),
 });
 
 export const insertProductCatalogSchema = createInsertSchema(productCatalog).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  description: z.string().optional(),
+  price: z.string().optional(),
+  imageUrl: z.string().optional(),
+  category: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

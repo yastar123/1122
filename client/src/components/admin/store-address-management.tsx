@@ -213,7 +213,13 @@ export default function StoreAddressManagement() {
                       <FormItem>
                         <FormLabel>Nomor Telepon</FormLabel>
                         <FormControl>
-                          <Input placeholder="021-1234567" {...field} />
+                          <Input 
+                            placeholder="021-1234567" 
+                            value={field.value || ""} 
+                            onChange={field.onChange} 
+                            onBlur={field.onBlur}
+                            name={field.name}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -227,7 +233,13 @@ export default function StoreAddressManagement() {
                       <FormItem>
                         <FormLabel>WhatsApp</FormLabel>
                         <FormControl>
-                          <Input placeholder="6281234567890" {...field} />
+                          <Input 
+                            placeholder="6281234567890" 
+                            value={field.value || ""} 
+                            onChange={field.onChange} 
+                            onBlur={field.onBlur}
+                            name={field.name}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -245,7 +257,10 @@ export default function StoreAddressManagement() {
                         <Textarea 
                           placeholder="Senin - Sabtu: 08:00 - 17:00"
                           rows={2}
-                          {...field} 
+                          value={field.value || ""} 
+                          onChange={field.onChange} 
+                          onBlur={field.onBlur}
+                          name={field.name}
                         />
                       </FormControl>
                       <FormMessage />
@@ -260,7 +275,13 @@ export default function StoreAddressManagement() {
                     <FormItem>
                       <FormLabel>Link Google Maps</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://maps.google.com/..." {...field} />
+                        <Input 
+                          placeholder="https://maps.google.com/..." 
+                          value={field.value || ""} 
+                          onChange={field.onChange} 
+                          onBlur={field.onBlur}
+                          name={field.name}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -280,7 +301,7 @@ export default function StoreAddressManagement() {
                       </div>
                       <FormControl>
                         <Switch
-                          checked={field.value}
+                          checked={field.value || false}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>

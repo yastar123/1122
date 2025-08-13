@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit2, Trash2, Save } from "lucide-react";
+import { Plus, Edit2, Trash2, Save, Upload, Link } from "lucide-react";
 
 export default function PrizeManagement() {
   const { toast } = useToast();
@@ -25,6 +26,8 @@ export default function PrizeManagement() {
     endDate: "",
     isActive: true,
   });
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
 
   const { data: prizes = [], isLoading } = useQuery<Prize[]>({
     queryKey: ["/api/prizes"],
@@ -113,6 +116,21 @@ export default function PrizeManagement() {
       endDate: "",
       isActive: true,
     });
+    setBannerFile(null);
+    setBannerPreview("");
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBannerFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setBannerPreview(e.target?.result as string);
+        setFormData(prev => ({ ...prev, bannerUrl: e.target?.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleCreate = (e: React.FormEvent) => {
@@ -204,13 +222,63 @@ export default function PrizeManagement() {
               </div>
               
               <div>
-                <Label>URL Banner</Label>
-                <Input
-                  type="url"
-                  value={formData.bannerUrl}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bannerUrl: e.target.value }))}
-                  placeholder="https://example.com/banner.png"
-                />
+                <Label>Banner Hadiah</Label>
+                <Tabs defaultValue="upload" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="upload" className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      Upload File
+                    </TabsTrigger>
+                    <TabsTrigger value="url" className="flex items-center gap-2">
+                      <Link className="h-4 w-4" />
+                      URL Link
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="upload" className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      data-testid="input-banner-file"
+                    />
+                    {bannerPreview && (
+                      <div className="mt-2">
+                        <img 
+                          src={bannerPreview} 
+                          alt="Preview banner" 
+                          className="w-full h-32 object-cover rounded border"
+                        />
+                      </div>
+                    )}
+                  </TabsContent>
+                  
+                  <TabsContent value="url" className="space-y-2">
+                    <Input
+                      type="url"
+                      value={formData.bannerUrl}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, bannerUrl: e.target.value }));
+                        setBannerFile(null);
+                        setBannerPreview("");
+                      }}
+                      placeholder="https://example.com/banner.png"
+                      data-testid="input-banner-url"
+                    />
+                    {formData.bannerUrl && (
+                      <div className="mt-2">
+                        <img 
+                          src={formData.bannerUrl} 
+                          alt="Preview banner" 
+                          className="w-full h-32 object-cover rounded border"
+                          onError={(e) => {
+                            e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCIgZmlsbD0iIzk5YTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yIGxvYWRpbmcgaW1hZ2U8L3RleHQ+PC9zdmc+";
+                          }}
+                        />
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
               </div>
               
               <div className="grid grid-cols-2 gap-4">

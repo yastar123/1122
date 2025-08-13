@@ -48,7 +48,15 @@ export function registerRoutes(app: Express): Server {
     }
     
     try {
-      const validatedData = insertPrizeSchema.parse(req.body);
+      const data = req.body;
+      // Convert string dates to Date objects
+      const processedData = {
+        ...data,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
+      };
+      
+      const validatedData = insertPrizeSchema.parse(processedData);
       const prize = await storage.createPrize(validatedData);
       res.status(201).json(prize);
     } catch (error) {
@@ -67,7 +75,14 @@ export function registerRoutes(app: Express): Server {
     
     try {
       const { id } = req.params;
-      const updates = insertPrizeSchema.partial().parse(req.body);
+      const data = req.body;
+      
+      // Convert string dates to Date objects if present
+      const processedData = { ...data };
+      if (data.startDate) processedData.startDate = new Date(data.startDate);
+      if (data.endDate) processedData.endDate = new Date(data.endDate);
+      
+      const updates = insertPrizeSchema.partial().parse(processedData);
       const prize = await storage.updatePrize(id, updates);
       res.json(prize);
     } catch (error) {

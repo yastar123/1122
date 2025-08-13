@@ -82,7 +82,19 @@ export default function HomePage() {
         </div>
       </div>
 
-
+      {/* Banner Section */}
+      {settings?.bannerUrl && (
+        <div className="max-w-md mx-auto px-6 mb-6">
+          <div className="w-full overflow-hidden rounded-lg shadow-md">
+            <img 
+              src={settings.bannerUrl} 
+              alt="Banner" 
+              className="w-full h-48 object-cover"
+              data-testid="img-banner"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Main Coupon Check Form */}
       <div className="max-w-md mx-auto px-6">

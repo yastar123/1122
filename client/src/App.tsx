@@ -11,17 +11,23 @@ import NotFound from "@/pages/not-found";
 import StoreAddressesPage from "@/pages/store-addresses";
 import ProductCatalogPage from "@/pages/product-catalog";
 import { ProtectedRoute } from "./lib/protected-route";
+import Navbar from "@/components/navbar";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={HomePage} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/alamat-toko" component={StoreAddressesPage} />
-      <Route path="/katalog-produk" component={ProductCatalogPage} />
-      <ProtectedRoute path="/admin" component={AdminDashboard} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main>
+        <Switch>
+          <Route path="/" component={HomePage} />
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/alamat-toko" component={StoreAddressesPage} />
+          <Route path="/katalog-produk" component={ProductCatalogPage} />
+          <ProtectedRoute path="/admin" component={AdminDashboard} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+    </div>
   );
 }
 

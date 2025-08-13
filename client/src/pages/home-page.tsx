@@ -70,7 +70,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       {/* Logo Section */}
       <div className="max-w-md mx-auto pt-8 pb-4 text-center">
         <div className="w-24 h-24 mx-auto mb-4 border-2 border-pink-400 rounded-full flex items-center justify-center">

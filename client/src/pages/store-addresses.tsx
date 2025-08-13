@@ -14,7 +14,7 @@ export default function StoreAddressesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-gray-50 flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Memuat alamat toko...</p>
@@ -24,20 +24,13 @@ export default function StoreAddressesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Alamat Toko</h1>
-              <p className="text-gray-600 mt-1">Temukan lokasi toko ConnectPrinting terdekat</p>
-            </div>
-            <Link href="/">
-              <Button variant="outline">
-                Kembali ke Beranda
-              </Button>
-            </Link>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900">Alamat Toko</h1>
+            <p className="text-gray-600 mt-1">Temukan lokasi toko ConnectPrinting terdekat</p>
           </div>
         </div>
       </div>

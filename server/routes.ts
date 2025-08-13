@@ -52,7 +52,11 @@ export function registerRoutes(app: Express): Server {
       const prize = await storage.createPrize(validatedData);
       res.status(201).json(prize);
     } catch (error) {
-      res.status(400).json({ message: "Invalid prize data" });
+      console.error('Error creating prize:', error);
+      res.status(400).json({ 
+        message: "Invalid prize data", 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
     }
   });
 
@@ -157,12 +161,14 @@ export function registerRoutes(app: Express): Server {
       
       // Check if coupon exists as a prize coupon number
       const prizes = await storage.getAllPrizes();
+      const currentDate = new Date();
       const matchingPrize = prizes.find(prize => 
         prize.couponNumber === submissionData.couponNumber && 
         prize.isActive &&
-        new Date() >= new Date(prize.startDate) &&
-        new Date() <= new Date(prize.endDate)
+        currentDate >= new Date(prize.startDate) &&
+        currentDate <= new Date(prize.endDate)
       );
+
       
       let isWinner = false;
       let prizeId = null;

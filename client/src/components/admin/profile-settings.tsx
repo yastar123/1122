@@ -67,9 +67,26 @@ export default function ProfileSettings() {
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast({
+            title: "File Terlalu Besar",
+            description: "Ukuran file maksimal 5MB. Silakan kompres gambar terlebih dahulu.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = () => {
           setFormData(prev => ({ ...prev, [field]: reader.result as string }));
+        };
+        reader.onerror = () => {
+          toast({
+            title: "Gagal Memuat File",
+            description: "Terjadi kesalahan saat memuat file. Silakan coba lagi.",
+            variant: "destructive",
+          });
         };
         reader.readAsDataURL(file);
       }

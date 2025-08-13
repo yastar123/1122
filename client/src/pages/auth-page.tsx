@@ -33,15 +33,15 @@ export default function AuthPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-lg mx-auto px-6 py-8">
+        <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
-              <Gift className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 bg-primary rounded-lg flex items-center justify-center">
+              <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
               Admin Login
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               Masuk untuk mengakses dashboard admin
             </p>
           </div>
@@ -49,10 +49,10 @@ export default function AuthPage() {
       </div>
 
       {/* Login Form */}
-      <div className="max-w-lg mx-auto px-6 py-8">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <Card className="shadow-sm border border-gray-200">
-          <CardContent className="p-6">
-            <form onSubmit={handleLogin} className="space-y-6">
+          <CardContent className="p-4 sm:p-6">
+            <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium text-gray-700">
                   Email/Username
@@ -63,7 +63,7 @@ export default function AuthPage() {
                   value={loginData.username}
                   onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
                   placeholder="Masukkan email atau username"
-                  className="h-12 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="h-11 sm:h-12 text-sm sm:text-base border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>

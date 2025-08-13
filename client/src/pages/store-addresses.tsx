@@ -27,19 +27,19 @@ export default function StoreAddressesPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 bg-primary rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-semibold text-gray-900">Alamat Toko</h1>
-            <p className="text-gray-600 mt-2">Temukan lokasi toko terdekat</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Alamat Toko</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-2">Temukan lokasi toko terdekat</p>
           </div>
         </div>
       </div>
 
       {/* Store Addresses */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {activeStores.length === 0 ? (
           <div className="text-center py-12">
             <MapPin className="mx-auto h-12 w-12 text-gray-400" />
@@ -47,19 +47,19 @@ export default function StoreAddressesPage() {
             <p className="mt-2 text-gray-600">Informasi alamat toko akan ditampilkan di sini.</p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
             {activeStores.map((store) => (
               <Card key={store.id} className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                <CardHeader className="bg-primary text-white">
-                  <CardTitle className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                      <MapPin className="h-4 w-4" />
+                <CardHeader className="bg-primary text-white p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
-                    {store.name}
+                    <span className="truncate">{store.name}</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+                <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6">
+                  <div className="space-y-2 sm:space-y-3">
                     <div className="flex items-start gap-3">
                       <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                       <div>

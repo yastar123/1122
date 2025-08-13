@@ -19,6 +19,7 @@ export default function ParticipantManagement() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [prizeFilter, setPrizeFilter] = useState("all");
+  const [editingField, setEditingField] = useState<{participantId: string, field: string} | null>(null);
 
   const { data: participants = [], isLoading } = useQuery<Participant[]>({
     queryKey: ["/api/participants", prizeFilter],
@@ -34,16 +35,17 @@ export default function ParticipantManagement() {
     queryKey: ["/api/prizes"],
   });
 
-  const updateClaimStatusMutation = useMutation({
-    mutationFn: async ({ id, isPrizeClaimed }: { id: string; isPrizeClaimed: boolean }) => {
-      const res = await apiRequest("PUT", `/api/participants/${id}`, { isPrizeClaimed });
+  const updateParticipantMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Participant> }) => {
+      const res = await apiRequest("PUT", `/api/participants/${id}`, data);
       return await res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/participants"] });
+      setEditingField(null);
       toast({
         title: "Berhasil",
-        description: "Status pengambilan hadiah berhasil diperbarui",
+        description: "Data peserta berhasil diperbarui",
       });
     },
     onError: (error) => {
@@ -65,10 +67,29 @@ export default function ParticipantManagement() {
       return;
     }
 
-    updateClaimStatusMutation.mutate({
+    updateParticipantMutation.mutate({
       id: participant.id,
-      isPrizeClaimed: !participant.isPrizeClaimed,
+      data: { isPrizeClaimed: !participant.isPrizeClaimed },
     });
+  };
+
+  const handleFieldUpdate = (participantId: string, field: string, value: any) => {
+    updateParticipantMutation.mutate({
+      id: participantId,
+      data: { [field]: value },
+    });
+  };
+
+  const isEditing = (participantId: string, field: string) => {
+    return editingField?.participantId === participantId && editingField?.field === field;
+  };
+
+  const startEditing = (participantId: string, field: string) => {
+    setEditingField({ participantId, field });
+  };
+
+  const stopEditing = () => {
+    setEditingField(null);
   };
 
   const filteredParticipants = participants.filter(participant =>
@@ -173,60 +194,163 @@ export default function ParticipantManagement() {
               <TableHead>Hadiah</TableHead>
               <TableHead>Pengambilan</TableHead>
               <TableHead>Keterangan</TableHead>
+              <TableHead>Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredParticipants.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={9} className="text-center py-8 text-gray-500">
                   {searchQuery || prizeFilter ? "Tidak ada hasil yang ditemukan" : "Belum ada peserta"}
                 </TableCell>
               </TableRow>
             ) : (
               filteredParticipants.map((participant) => (
                 <TableRow key={participant.id}>
+                  {/* Nama */}
                   <TableCell>
-                    <div className="font-medium">{participant.fullName}</div>
+                    {isEditing(participant.id, "fullName") ? (
+                      <Input
+                        defaultValue={participant.fullName}
+                        onBlur={(e) => handleFieldUpdate(participant.id, "fullName", e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleFieldUpdate(participant.id, "fullName", e.currentTarget.value);
+                          } else if (e.key === "Escape") {
+                            stopEditing();
+                          }
+                        }}
+                        autoFocus
+                        className="font-medium"
+                      />
+                    ) : (
+                      <div 
+                        className="font-medium cursor-pointer hover:bg-gray-100 p-1 rounded"
+                        onClick={() => startEditing(participant.id, "fullName")}
+                      >
+                        {participant.fullName}
+                      </div>
+                    )}
                   </TableCell>
+                  
+                  {/* No. WhatsApp */}
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-gray-400" />
-                      <span className="font-mono text-sm">{participant.whatsappNumber}</span>
-                    </div>
+                    {isEditing(participant.id, "whatsappNumber") ? (
+                      <Input
+                        defaultValue={participant.whatsappNumber}
+                        onBlur={(e) => handleFieldUpdate(participant.id, "whatsappNumber", e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleFieldUpdate(participant.id, "whatsappNumber", e.currentTarget.value);
+                          } else if (e.key === "Escape") {
+                            stopEditing();
+                          }
+                        }}
+                        autoFocus
+                        className="font-mono text-sm"
+                      />
+                    ) : (
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded"
+                        onClick={() => startEditing(participant.id, "whatsappNumber")}
+                      >
+                        <Phone className="h-4 w-4 text-gray-400" />
+                        <span className="font-mono text-sm">{participant.whatsappNumber}</span>
+                      </div>
+                    )}
                   </TableCell>
+                  
+                  {/* Nomor Kupon */}
                   <TableCell>
-                    <span className="font-mono bg-gray-100 px-2 py-1 rounded text-sm">
-                      {participant.couponNumber}
-                    </span>
+                    {isEditing(participant.id, "couponNumber") ? (
+                      <Input
+                        defaultValue={participant.couponNumber}
+                        onBlur={(e) => handleFieldUpdate(participant.id, "couponNumber", e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleFieldUpdate(participant.id, "couponNumber", e.currentTarget.value);
+                          } else if (e.key === "Escape") {
+                            stopEditing();
+                          }
+                        }}
+                        autoFocus
+                        className="font-mono text-sm"
+                      />
+                    ) : (
+                      <span 
+                        className="font-mono bg-gray-100 px-2 py-1 rounded text-sm cursor-pointer hover:bg-gray-200"
+                        onClick={() => startEditing(participant.id, "couponNumber")}
+                      >
+                        {participant.couponNumber}
+                      </span>
+                    )}
                   </TableCell>
+                  
+                  {/* Waktu Input */}
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-gray-400" />
                       <span className="text-sm">{formatTimeAgo(participant.createdAt)}</span>
                     </div>
                   </TableCell>
+                  
+                  {/* Status */}
                   <TableCell>
                     <Badge variant={participant.isWinner ? "default" : "secondary"}>
                       {participant.isWinner ? "Pemenang" : "Tidak Menang"}
                     </Badge>
                   </TableCell>
+                  
+                  {/* Hadiah */}
                   <TableCell>
-                    {participant.prizeName ? (
-                      <div className="flex items-center gap-2">
-                        <Gift className="h-4 w-4 text-yellow-500" />
-                        <span className="text-sm font-medium">{participant.prizeName}</span>
-                      </div>
+                    {isEditing(participant.id, "prizeName") ? (
+                      <Select
+                        defaultValue={participant.prizeName || ""}
+                        onValueChange={(value) => {
+                          const isWinner = value !== "";
+                          const prizeData = prizes.find(p => p.name === value);
+                          handleFieldUpdate(participant.id, "prizeName", value || null);
+                          handleFieldUpdate(participant.id, "prizeId", prizeData?.id || null);
+                          handleFieldUpdate(participant.id, "isWinner", isWinner);
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih hadiah" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="no-prize">Tidak ada hadiah</SelectItem>
+                          {prizes.map(prize => (
+                            <SelectItem key={prize.id} value={prize.name}>
+                              {prize.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     ) : (
-                      <span className="text-gray-400 text-sm">-</span>
+                      <div 
+                        className="cursor-pointer hover:bg-gray-100 p-1 rounded"
+                        onClick={() => startEditing(participant.id, "prizeName")}
+                      >
+                        {participant.prizeName ? (
+                          <div className="flex items-center gap-2">
+                            <Gift className="h-4 w-4 text-yellow-500" />
+                            <span className="text-sm font-medium">{participant.prizeName}</span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
+                      </div>
                     )}
                   </TableCell>
+                  
+                  {/* Pengambilan */}
                   <TableCell>
                     {participant.isWinner ? (
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={participant.isPrizeClaimed || false}
                           onCheckedChange={() => handleClaimStatusToggle(participant)}
-                          disabled={updateClaimStatusMutation.isPending}
+                          disabled={updateParticipantMutation.isPending}
                         />
                         <span className="text-sm">
                           {participant.isPrizeClaimed ? (
@@ -246,8 +370,53 @@ export default function ParticipantManagement() {
                       <span className="text-gray-400 text-sm">-</span>
                     )}
                   </TableCell>
+                  
+                  {/* Keterangan */}
                   <TableCell>
-                    <span className="text-sm text-gray-600">{participant.notes || "-"}</span>
+                    {isEditing(participant.id, "notes") ? (
+                      <Textarea
+                        defaultValue={participant.notes || ""}
+                        onBlur={(e) => handleFieldUpdate(participant.id, "notes", e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleFieldUpdate(participant.id, "notes", e.currentTarget.value);
+                          } else if (e.key === "Escape") {
+                            stopEditing();
+                          }
+                        }}
+                        autoFocus
+                        className="text-sm min-h-[60px]"
+                        rows={2}
+                      />
+                    ) : (
+                      <div 
+                        className="text-sm text-gray-600 cursor-pointer hover:bg-gray-100 p-1 rounded min-h-[20px]"
+                        onClick={() => startEditing(participant.id, "notes")}
+                      >
+                        {participant.notes || "-"}
+                      </div>
+                    )}
+                  </TableCell>
+                  
+                  {/* Aksi */}
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          if (editingField) {
+                            stopEditing();
+                          } else {
+                            startEditing(participant.id, "fullName");
+                          }
+                        }}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

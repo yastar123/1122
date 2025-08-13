@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit2, Trash2, Package, Tag, Check, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Package, Tag, Check, X, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { apiRequest } from "@/lib/queryClient";
@@ -140,6 +140,40 @@ export default function ProductCatalogManagement() {
     setIsDialogOpen(true);
   };
 
+  const handleFileUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast({
+            title: "File Terlalu Besar",
+            description: "Ukuran file maksimal 5MB. Silakan kompres gambar terlebih dahulu.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          form.setValue('imageUrl', reader.result as string);
+        };
+        reader.onerror = () => {
+          toast({
+            title: "Gagal Memuat File",
+            description: "Terjadi kesalahan saat memuat file. Silakan coba lagi.",
+            variant: "destructive",
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -242,10 +276,38 @@ export default function ProductCatalogManagement() {
                   name="imageUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>URL Gambar</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                      </FormControl>
+                      <FormLabel>Gambar Produk</FormLabel>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/image.jpg atau upload gambar" 
+                              {...field} 
+                              className="flex-1"
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleFileUpload}
+                            data-testid="button-upload-product-image"
+                          >
+                            <Upload className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {field.value && (
+                          <div className="mt-2">
+                            <img 
+                              src={field.value} 
+                              alt="Preview" 
+                              className="w-32 h-24 object-cover rounded border"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

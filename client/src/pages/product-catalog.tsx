@@ -97,7 +97,7 @@ export default function ProductCatalogPage() {
                       variant={selectedCategory === category ? "default" : "outline"}
                       className="cursor-pointer hover:bg-blue-50 transition-colors"
                       onClick={() => setSelectedCategory(category)}
-                      data-testid={`filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                      data-testid={`filter-category-${category?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`}
                     >
                       {category}
                     </Badge>

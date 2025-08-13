@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Settings, type InsertSettings, type Prize, type InsertPrize, type Participant, type InsertParticipant, type Submission, type InsertSubmission } from "@shared/schema";
+import { type User, type InsertUser, type Settings, type InsertSettings, type Prize, type InsertPrize, type Participant, type InsertParticipant, type Submission, type InsertSubmission, type StoreAddress, type InsertStoreAddress, type ProductCatalog, type InsertProductCatalog } from "@shared/schema";
 import { randomUUID } from "crypto";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -37,6 +37,20 @@ export interface IStorage {
   getAllSubmissions(): Promise<Submission[]>;
   createSubmission(submission: InsertSubmission): Promise<Submission>;
   searchSubmissions(query: string): Promise<Submission[]>;
+  
+  // Store Address methods
+  getAllStoreAddresses(): Promise<StoreAddress[]>;
+  getStoreAddress(id: string): Promise<StoreAddress | undefined>;
+  createStoreAddress(storeAddress: InsertStoreAddress): Promise<StoreAddress>;
+  updateStoreAddress(id: string, storeAddress: Partial<InsertStoreAddress>): Promise<StoreAddress>;
+  deleteStoreAddress(id: string): Promise<boolean>;
+  
+  // Product Catalog methods
+  getAllProducts(): Promise<ProductCatalog[]>;
+  getProduct(id: string): Promise<ProductCatalog | undefined>;
+  createProduct(product: InsertProductCatalog): Promise<ProductCatalog>;
+  updateProduct(id: string, product: Partial<InsertProductCatalog>): Promise<ProductCatalog>;
+  deleteProduct(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -45,6 +59,8 @@ export class MemStorage implements IStorage {
   private prizes: Map<string, Prize>;
   private participants: Map<string, Participant>;
   private submissions: Map<string, Submission>;
+  private storeAddresses: Map<string, StoreAddress>;
+  private products: Map<string, ProductCatalog>;
   public sessionStore: session.Store;
 
   constructor() {
@@ -53,6 +69,8 @@ export class MemStorage implements IStorage {
     this.prizes = new Map();
     this.participants = new Map();
     this.submissions = new Map();
+    this.storeAddresses = new Map();
+    this.products = new Map();
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000,
     });
@@ -62,6 +80,9 @@ export class MemStorage implements IStorage {
     
     // Initialize dummy data for testing
     this.initializeDummyData();
+    
+    // Initialize dummy store addresses and products
+    this.initializeStoreData();
     
     // Initialize default settings
     this.settings = {
@@ -396,6 +417,190 @@ Langkah - langkah:
     ).sort((a, b) => 
       new Date(b.submittedAt!).getTime() - new Date(a.submittedAt!).getTime()
     );
+  }
+
+  private async initializeStoreData() {
+    // Initialize dummy store addresses
+    const storeAddresses = [
+      {
+        name: "ConnectPrinting Pusat",
+        address: "Jl. Sudirman No. 123, Jakarta Pusat",
+        phone: "021-1234567",
+        whatsapp: "6281234567890",
+        openingHours: "Senin - Sabtu: 08:00 - 17:00",
+        mapsLink: "https://maps.google.com/example1",
+        isActive: true
+      },
+      {
+        name: "ConnectPrinting Cabang Selatan",
+        address: "Jl. TB Simatupang No. 456, Jakarta Selatan",
+        phone: "021-7654321",
+        whatsapp: "6281234567891",
+        openingHours: "Senin - Jumat: 09:00 - 18:00",
+        mapsLink: "https://maps.google.com/example2",
+        isActive: true
+      }
+    ];
+
+    for (const store of storeAddresses) {
+      const id = randomUUID();
+      const storeData: StoreAddress = {
+        id,
+        name: store.name,
+        address: store.address,
+        phone: store.phone,
+        whatsapp: store.whatsapp,
+        openingHours: store.openingHours,
+        mapsLink: store.mapsLink,
+        isActive: store.isActive,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.storeAddresses.set(id, storeData);
+    }
+
+    // Initialize dummy products
+    const products = [
+      {
+        name: "Banner Custom",
+        description: "Banner berkualitas tinggi dengan desain custom sesuai kebutuhan",
+        price: "Rp 50.000 - 200.000",
+        imageUrl: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
+        category: "Advertising",
+        isAvailable: true,
+        isActive: true
+      },
+      {
+        name: "Sticker Vinyl",
+        description: "Sticker vinyl tahan air dengan berbagai ukuran dan bentuk",
+        price: "Rp 5.000 - 50.000",
+        imageUrl: "https://images.unsplash.com/photo-1586717799252-bd134ad00e26?w=400&h=300&fit=crop",
+        category: "Sticker",
+        isAvailable: true,
+        isActive: true
+      },
+      {
+        name: "Kaos Custom",
+        description: "Kaos custom dengan sablon berkualitas tinggi",
+        price: "Rp 75.000 - 150.000",
+        imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop",
+        category: "Apparel",
+        isAvailable: true,
+        isActive: true
+      },
+      {
+        name: "Kartu Nama",
+        description: "Kartu nama profesional dengan berbagai pilihan kertas",
+        price: "Rp 100.000 / 1000 pcs",
+        imageUrl: "https://images.unsplash.com/photo-1541348263662-e1aa84d8d4d9?w=400&h=300&fit=crop",
+        category: "Business Cards",
+        isAvailable: true,
+        isActive: true
+      }
+    ];
+
+    for (const product of products) {
+      const id = randomUUID();
+      const productData: ProductCatalog = {
+        id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        isAvailable: product.isAvailable,
+        isActive: product.isActive,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.products.set(id, productData);
+    }
+  }
+
+  // Store Address methods
+  async getAllStoreAddresses(): Promise<StoreAddress[]> {
+    return Array.from(this.storeAddresses.values()).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+    );
+  }
+
+  async getStoreAddress(id: string): Promise<StoreAddress | undefined> {
+    return this.storeAddresses.get(id);
+  }
+
+  async createStoreAddress(insertStoreAddress: InsertStoreAddress): Promise<StoreAddress> {
+    const id = randomUUID();
+    const storeAddress: StoreAddress = {
+      id,
+      name: insertStoreAddress.name,
+      address: insertStoreAddress.address,
+      phone: insertStoreAddress.phone || null,
+      whatsapp: insertStoreAddress.whatsapp || null,
+      openingHours: insertStoreAddress.openingHours || null,
+      mapsLink: insertStoreAddress.mapsLink || null,
+      isActive: insertStoreAddress.isActive || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.storeAddresses.set(id, storeAddress);
+    return storeAddress;
+  }
+
+  async updateStoreAddress(id: string, updates: Partial<InsertStoreAddress>): Promise<StoreAddress> {
+    const existing = this.storeAddresses.get(id);
+    if (!existing) {
+      throw new Error("Store address not found");
+    }
+    const updated = { ...existing, ...updates, updatedAt: new Date() };
+    this.storeAddresses.set(id, updated);
+    return updated;
+  }
+
+  async deleteStoreAddress(id: string): Promise<boolean> {
+    return this.storeAddresses.delete(id);
+  }
+
+  // Product Catalog methods
+  async getAllProducts(): Promise<ProductCatalog[]> {
+    return Array.from(this.products.values()).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+    );
+  }
+
+  async getProduct(id: string): Promise<ProductCatalog | undefined> {
+    return this.products.get(id);
+  }
+
+  async createProduct(insertProduct: InsertProductCatalog): Promise<ProductCatalog> {
+    const id = randomUUID();
+    const product: ProductCatalog = {
+      id,
+      name: insertProduct.name,
+      description: insertProduct.description || null,
+      price: insertProduct.price || null,
+      imageUrl: insertProduct.imageUrl || null,
+      category: insertProduct.category || null,
+      isAvailable: insertProduct.isAvailable || null,
+      isActive: insertProduct.isActive || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.products.set(id, product);
+    return product;
+  }
+
+  async updateProduct(id: string, updates: Partial<InsertProductCatalog>): Promise<ProductCatalog> {
+    const existing = this.products.get(id);
+    if (!existing) {
+      throw new Error("Product not found");
+    }
+    const updated = { ...existing, ...updates, updatedAt: new Date() };
+    this.products.set(id, updated);
+    return updated;
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    return this.products.delete(id);
   }
 }
 

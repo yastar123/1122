@@ -1,8 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { eq } from "drizzle-orm";
-import { users, settings, prizes, participants, submissions } from "@shared/schema";
-import type { User, InsertUser, Settings, InsertSettings, Prize, InsertPrize, Participant, InsertParticipant, Submission, InsertSubmission } from "@shared/schema";
+import { users, settings, prizes, participants, submissions, storeAddresses, productCatalog } from "@shared/schema";
+import type { User, InsertUser, Settings, InsertSettings, Prize, InsertPrize, Participant, InsertParticipant, Submission, InsertSubmission, StoreAddress, InsertStoreAddress, ProductCatalog, InsertProductCatalog } from "@shared/schema";
 import { randomUUID } from "crypto";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -18,7 +18,7 @@ export class DatabaseStorage implements IStorage {
 
   constructor() {
     const sql = neon(process.env.DATABASE_URL!);
-    this.db = drizzle(sql, { schema: { users, settings, prizes, participants, submissions } });
+    this.db = drizzle(sql, { schema: { users, settings, prizes, participants, submissions, storeAddresses, productCatalog } });
     
     // Use PostgreSQL session store for production or memory store for development
     if (process.env.NODE_ENV === "production" && process.env.DATABASE_URL) {
@@ -175,5 +175,47 @@ export class DatabaseStorage implements IStorage {
   async searchSubmissions(query: string): Promise<Submission[]> {
     // For now, return all submissions. Could be enhanced with filtering logic
     return await this.getAllSubmissions();
+  }
+
+  // Store Address methods - placeholder implementations
+  async getAllStoreAddresses(): Promise<StoreAddress[]> {
+    return [];
+  }
+
+  async getStoreAddress(id: string): Promise<StoreAddress | undefined> {
+    return undefined;
+  }
+
+  async createStoreAddress(storeAddress: InsertStoreAddress): Promise<StoreAddress> {
+    throw new Error("Store address operations not yet implemented for database storage");
+  }
+
+  async updateStoreAddress(id: string, storeAddress: Partial<InsertStoreAddress>): Promise<StoreAddress> {
+    throw new Error("Store address operations not yet implemented for database storage");
+  }
+
+  async deleteStoreAddress(id: string): Promise<boolean> {
+    return false;
+  }
+
+  // Product Catalog methods - placeholder implementations
+  async getAllProducts(): Promise<ProductCatalog[]> {
+    return [];
+  }
+
+  async getProduct(id: string): Promise<ProductCatalog | undefined> {
+    return undefined;
+  }
+
+  async createProduct(product: InsertProductCatalog): Promise<ProductCatalog> {
+    throw new Error("Product operations not yet implemented for database storage");
+  }
+
+  async updateProduct(id: string, product: Partial<InsertProductCatalog>): Promise<ProductCatalog> {
+    throw new Error("Product operations not yet implemented for database storage");
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    return false;
   }
 }

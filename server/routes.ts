@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertPrizeSchema, insertParticipantSchema, insertSubmissionSchema, insertSettingsSchema } from "@shared/schema";
+import { insertPrizeSchema, insertParticipantSchema, insertSubmissionSchema, insertSettingsSchema, insertStoreAddressSchema, insertProductCatalogSchema } from "@shared/schema";
 
 export function registerRoutes(app: Express): Server {
   // Setup authentication routes
@@ -254,6 +254,114 @@ export function registerRoutes(app: Express): Server {
       res.json(submissions);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch submissions" });
+    }
+  });
+
+  // Store Address routes
+  app.get("/api/store-addresses", async (req, res) => {
+    try {
+      const storeAddresses = await storage.getAllStoreAddresses();
+      res.json(storeAddresses);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch store addresses" });
+    }
+  });
+
+  app.post("/api/store-addresses", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const validatedData = insertStoreAddressSchema.parse(req.body);
+      const storeAddress = await storage.createStoreAddress(validatedData);
+      res.status(201).json(storeAddress);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid store address data" });
+    }
+  });
+
+  app.put("/api/store-addresses/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const storeAddress = await storage.updateStoreAddress(req.params.id, req.body);
+      res.json(storeAddress);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update store address" });
+    }
+  });
+
+  app.delete("/api/store-addresses/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const success = await storage.deleteStoreAddress(req.params.id);
+      if (success) {
+        res.json({ message: "Store address deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Store address not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete store address" });
+    }
+  });
+
+  // Product Catalog routes
+  app.get("/api/products", async (req, res) => {
+    try {
+      const products = await storage.getAllProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
+  app.post("/api/products", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const validatedData = insertProductCatalogSchema.parse(req.body);
+      const product = await storage.createProduct(validatedData);
+      res.status(201).json(product);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid product data" });
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const product = await storage.updateProduct(req.params.id, req.body);
+      res.json(product);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update product" });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const success = await storage.deleteProduct(req.params.id);
+      if (success) {
+        res.json({ message: "Product deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete product" });
     }
   });
 

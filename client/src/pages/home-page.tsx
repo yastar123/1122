@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Settings as SettingsIcon, Gift, CheckCircle, Info } from "lucide-react";
+import { Settings as SettingsIcon, Gift, CheckCircle, Info, MapPin, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
@@ -82,16 +82,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Banner Section */}
-      <div className="max-w-md mx-auto px-6 mb-6">
-        <div className="relative h-32 rounded-lg overflow-hidden border-2 border-gray-300 bg-gray-100 flex items-center justify-center">
-          {settings?.bannerUrl ? (
-            <img src={settings.bannerUrl} alt="Banner" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-pink-500 font-bold text-lg">Banner</span>
-          )}
-        </div>
-      </div>
+
 
       {/* Main Coupon Check Form */}
       <div className="max-w-md mx-auto px-6">
@@ -174,22 +165,7 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Prize Banner Section */}
-      <div className="max-w-md mx-auto px-6 mt-8">
-        <div className="text-center mb-4">
-          <span className="text-pink-500 font-bold text-lg">Banner</span>
-        </div>
-        <div className="relative h-48 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
-          {settings?.bannerUrl ? (
-            <img src={settings.bannerUrl} alt="Prize Banner" className="w-full h-full object-cover" />
-          ) : (
-            <div className="text-center">
-              <Gift className="mx-auto text-gray-400 w-16 h-16 mb-2" />
-              <p className="text-gray-500">Gambar hadiah akan ditampilkan di sini</p>
-            </div>
-          )}
-        </div>
-      </div>
+
 
       {/* Terms and Conditions */}
       {settings?.termsAndConditions && (
@@ -200,9 +176,33 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* Navigation Links */}
+      <div className="max-w-md mx-auto px-6 mt-8 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <Link href="/alamat-toko">
+            <Button
+              variant="outline"
+              className="w-full h-12 flex items-center justify-center border-blue-200 hover:bg-blue-50"
+            >
+              <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+              <span className="text-blue-600 font-semibold">Alamat Toko</span>
+            </Button>
+          </Link>
+          <Link href="/katalog-produk">
+            <Button
+              variant="outline"
+              className="w-full h-12 flex items-center justify-center border-purple-200 hover:bg-purple-50"
+            >
+              <Package className="w-5 h-5 mr-2 text-purple-600" />
+              <span className="text-purple-600 font-semibold">Katalog Produk</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       {/* Contact Admin Button */}
       {settings?.adminWhatsApp && (
-        <div className="max-w-md mx-auto px-6 mt-8 pb-8">
+        <div className="max-w-md mx-auto px-6 mt-6 pb-8">
           <Button
             onClick={handleWhatsAppContact}
             className="w-full h-12 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg flex items-center justify-center"

@@ -62,6 +62,32 @@ export const submissions = pgTable("submissions", {
   submittedAt: timestamp("submitted_at").defaultNow(),
 });
 
+export const storeAddresses = pgTable("store_addresses", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  address: text("address").notNull(),
+  phone: text("phone"),
+  whatsapp: text("whatsapp"),
+  openingHours: text("opening_hours"),
+  mapsLink: text("maps_link"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const productCatalog = pgTable("product_catalog", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: text("price"),
+  imageUrl: text("image_url"),
+  category: text("category"),
+  isAvailable: boolean("is_available").default(true),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -88,6 +114,18 @@ export const insertSubmissionSchema = createInsertSchema(submissions).omit({
   submittedAt: true,
 });
 
+export const insertStoreAddressSchema = createInsertSchema(storeAddresses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertProductCatalogSchema = createInsertSchema(productCatalog).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertSettings = z.infer<typeof insertSettingsSchema>;
@@ -98,3 +136,7 @@ export type InsertParticipant = z.infer<typeof insertParticipantSchema>;
 export type Participant = typeof participants.$inferSelect;
 export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
 export type Submission = typeof submissions.$inferSelect;
+export type InsertStoreAddress = z.infer<typeof insertStoreAddressSchema>;
+export type StoreAddress = typeof storeAddresses.$inferSelect;
+export type InsertProductCatalog = z.infer<typeof insertProductCatalogSchema>;
+export type ProductCatalog = typeof productCatalog.$inferSelect;

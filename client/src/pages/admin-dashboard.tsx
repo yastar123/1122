@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
-import { Settings, Gift, Users, History, LogOut, FileText } from "lucide-react";
+import { Settings, Gift, Users, History, LogOut, FileText, MapPin, Package } from "lucide-react";
 import ProfileSettings from "@/components/admin/profile-settings";
 import PrizeManagement from "@/components/admin/prize-management";
 import ParticipantManagement from "@/components/admin/participant-management";
 import SubmissionHistory from "@/components/admin/submission-history";
 import PlaceholderManagement from "@/components/admin/placeholder-management";
+import StoreAddressManagement from "@/components/admin/store-address-management";
+import ProductCatalogManagement from "@/components/admin/product-catalog-management";
 
 export default function AdminDashboard() {
   const { user, logoutMutation } = useAuth();
@@ -48,7 +50,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Profil
@@ -64,6 +66,14 @@ export default function AdminDashboard() {
             <TabsTrigger value="participants" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Peserta
+            </TabsTrigger>
+            <TabsTrigger value="stores" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Alamat Toko
+            </TabsTrigger>
+            <TabsTrigger value="products" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Produk
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="h-4 w-4" />
@@ -106,6 +116,14 @@ export default function AdminDashboard() {
                 <ParticipantManagement />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="stores" className="space-y-6">
+            <StoreAddressManagement />
+          </TabsContent>
+
+          <TabsContent value="products" className="space-y-6">
+            <ProductCatalogManagement />
           </TabsContent>
 
           <TabsContent value="history" className="space-y-6">

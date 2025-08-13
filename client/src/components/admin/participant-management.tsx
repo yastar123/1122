@@ -14,7 +14,6 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit2, Trash2, Search, Filter, Phone, Clock, Gift, CheckCircle, XCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { id } from "date-fns/locale";
 
 export default function ParticipantManagement() {
   const { toast } = useToast();
@@ -81,7 +80,7 @@ export default function ParticipantManagement() {
   const formatTimeAgo = (date: string | Date | null) => {
     if (!date) return "-";
     try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true, locale: id });
+      return formatDistanceToNow(new Date(date), { addSuffix: true });
     } catch {
       return "-";
     }

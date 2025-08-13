@@ -14,9 +14,9 @@ export default function StoreAddressesPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center py-12">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto"></div>
           <p className="mt-4 text-gray-600">Memuat alamat toko...</p>
         </div>
       </div>
@@ -24,22 +24,22 @@ export default function StoreAddressesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-              <MapPin className="w-8 h-8 text-white" />
+            <div className="w-12 h-12 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
+              <MapPin className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold">Alamat Toko</h1>
-            <p className="text-blue-100 mt-2">Temukan lokasi toko ConnectPrinting terdekat</p>
+            <h1 className="text-2xl font-semibold text-gray-900">Alamat Toko</h1>
+            <p className="text-gray-600 mt-2">Temukan lokasi toko terdekat</p>
           </div>
         </div>
       </div>
 
       {/* Store Addresses */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         {activeStores.length === 0 ? (
           <div className="text-center py-12">
             <MapPin className="mx-auto h-12 w-12 text-gray-400" />
@@ -49,11 +49,11 @@ export default function StoreAddressesPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {activeStores.map((store) => (
-              <Card key={store.id} className="border-0 shadow-xl rounded-2xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-2xl">
+              <Card key={store.id} className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                <CardHeader className="bg-primary text-white">
                   <CardTitle className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                      <MapPin className="h-5 w-5" />
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                      <MapPin className="h-4 w-4" />
                     </div>
                     {store.name}
                   </CardTitle>

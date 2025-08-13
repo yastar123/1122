@@ -24,10 +24,10 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-pink-500 shadow-lg">
+    <nav className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center">
-          <div className="flex space-x-1 bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 mt-2 mb-2">
+          <div className="flex space-x-1 py-3">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location === item.href;
@@ -37,10 +37,10 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105",
+                    "inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-white text-blue-600 shadow-md"
-                      : "text-white hover:bg-white/20"
+                      ? "bg-primary text-white"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   )}
                   data-testid={`nav-link-${item.href.replace('/', '') || 'home'}`}
                 >

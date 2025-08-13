@@ -40,9 +40,9 @@ export default function ProductCatalogPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center py-12">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto"></div>
           <p className="mt-4 text-gray-600">Memuat katalog produk...</p>
         </div>
       </div>
@@ -50,23 +50,23 @@ export default function ProductCatalogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-              <Package className="w-8 h-8 text-white" />
+            <div className="w-12 h-12 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
+              <Package className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold">Katalog Produk</h1>
-            <p className="text-purple-100 mt-2">Jelajahi berbagai produk printing berkualitas dari ConnectPrinting</p>
+            <h1 className="text-2xl font-semibold text-gray-900">Katalog Produk</h1>
+            <p className="text-gray-600 mt-2">Jelajahi berbagai produk berkualitas</p>
           </div>
         </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-200">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="space-y-6">
             {/* Search Bar */}
             <div className="relative max-w-md mx-auto">
@@ -76,7 +76,7 @@ export default function ProductCatalogPage() {
                 placeholder="Cari produk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 rounded-2xl border-2 border-purple-200 focus:border-purple-400 bg-white/90"
+                className="pl-12 h-12 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
                 data-testid="input-search-products"
               />
             </div>
@@ -88,17 +88,17 @@ export default function ProductCatalogPage() {
                 <div className="flex flex-wrap gap-3 justify-center">
                   <Badge 
                     variant={selectedCategory === null ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-purple-50 transition-all duration-200 transform hover:scale-105 px-4 py-2 rounded-xl text-sm font-medium"
+                    className="cursor-pointer hover:bg-gray-100 transition-colors px-4 py-2 text-sm font-medium"
                     onClick={() => setSelectedCategory(null)}
                     data-testid="filter-category-all"
                   >
-                    🏷️ Semua ({activeProducts.length})
+                    Semua ({activeProducts.length})
                   </Badge>
                   {categories.map((category) => (
                     <Badge 
                       key={category} 
                       variant={selectedCategory === category ? "default" : "outline"}
-                      className="cursor-pointer hover:bg-purple-50 transition-all duration-200 transform hover:scale-105 px-4 py-2 rounded-xl text-sm font-medium"
+                      className="cursor-pointer hover:bg-gray-100 transition-colors px-4 py-2 text-sm font-medium"
                       onClick={() => setSelectedCategory(category)}
                       data-testid={`filter-category-${category?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`}
                     >
@@ -112,7 +112,7 @@ export default function ProductCatalogPage() {
             {/* Results Counter */}
             <div className="text-center">
               <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
-                📊 Menampilkan {filteredProducts.length} dari {activeProducts.length} produk
+                Menampilkan {filteredProducts.length} dari {activeProducts.length} produk
                 {searchQuery && ` untuk "${searchQuery}"`}
                 {selectedCategory && ` di kategori "${selectedCategory}"`}
               </Badge>
@@ -122,7 +122,7 @@ export default function ProductCatalogPage() {
       </div>
 
       {/* Products */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
@@ -150,9 +150,9 @@ export default function ProductCatalogPage() {
             )}
           </div>
         ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="border-0 shadow-xl rounded-2xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 bg-white/90 backdrop-blur-sm overflow-hidden">
+              <Card key={product.id} className="shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 overflow-hidden">
                 {product.imageUrl && (
                   <div className="aspect-video overflow-hidden relative">
                     <img 

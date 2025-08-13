@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,9 +14,12 @@ import { ProtectedRoute } from "./lib/protected-route";
 import Navbar from "@/components/navbar";
 
 function Router() {
+  const [location] = useLocation();
+  const showNavbar = !location.startsWith('/admin') && !location.startsWith('/auth');
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      {showNavbar && <Navbar />}
       <main>
         <Switch>
           <Route path="/" component={HomePage} />

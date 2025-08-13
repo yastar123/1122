@@ -50,52 +50,55 @@ export default function ProductCatalogPage() {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Katalog Produk</h1>
-            <p className="text-gray-600 mt-1">Jelajahi berbagai produk printing berkualitas dari ConnectPrinting</p>
+            <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+              <Package className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold">Katalog Produk</h1>
+            <p className="text-purple-100 mt-2">Jelajahi berbagai produk printing berkualitas dari ConnectPrinting</p>
           </div>
         </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white border-b">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <div className="relative max-w-md mx-auto">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <Input
                 type="text"
                 placeholder="Cari produk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-12 h-12 rounded-2xl border-2 border-purple-200 focus:border-purple-400 bg-white/90"
                 data-testid="input-search-products"
               />
             </div>
 
             {/* Categories Filter */}
             {categories.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-700">Filter berdasarkan kategori:</p>
-                <div className="flex flex-wrap gap-2">
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-gray-700 text-center">Filter berdasarkan kategori:</p>
+                <div className="flex flex-wrap gap-3 justify-center">
                   <Badge 
                     variant={selectedCategory === null ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-blue-50 transition-colors"
+                    className="cursor-pointer hover:bg-purple-50 transition-all duration-200 transform hover:scale-105 px-4 py-2 rounded-xl text-sm font-medium"
                     onClick={() => setSelectedCategory(null)}
                     data-testid="filter-category-all"
                   >
-                    Semua Kategori
+                    🏷️ Semua ({activeProducts.length})
                   </Badge>
                   {categories.map((category) => (
                     <Badge 
                       key={category} 
                       variant={selectedCategory === category ? "default" : "outline"}
-                      className="cursor-pointer hover:bg-blue-50 transition-colors"
+                      className="cursor-pointer hover:bg-purple-50 transition-all duration-200 transform hover:scale-105 px-4 py-2 rounded-xl text-sm font-medium"
                       onClick={() => setSelectedCategory(category)}
                       data-testid={`filter-category-${category?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`}
                     >
@@ -107,10 +110,12 @@ export default function ProductCatalogPage() {
             )}
 
             {/* Results Counter */}
-            <div className="text-sm text-gray-600">
-              Menampilkan {filteredProducts.length} dari {activeProducts.length} produk
-              {searchQuery && ` untuk "${searchQuery}"`}
-              {selectedCategory && ` di kategori "${selectedCategory}"`}
+            <div className="text-center">
+              <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
+                📊 Menampilkan {filteredProducts.length} dari {activeProducts.length} produk
+                {searchQuery && ` untuk "${searchQuery}"`}
+                {selectedCategory && ` di kategori "${selectedCategory}"`}
+              </Badge>
             </div>
           </div>
         </div>
@@ -145,19 +150,20 @@ export default function ProductCatalogPage() {
             )}
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="hover:shadow-lg transition-shadow overflow-hidden">
+              <Card key={product.id} className="border-0 shadow-xl rounded-2xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 bg-white/90 backdrop-blur-sm overflow-hidden">
                 {product.imageUrl && (
-                  <div className="aspect-video overflow-hidden">
+                  <div className="aspect-video overflow-hidden relative">
                     <img 
                       src={product.imageUrl} 
                       alt={product.name}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
                 )}
-                <CardHeader>
+                <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{product.name}</CardTitle>
                     <div className="flex items-center gap-1">

@@ -24,13 +24,16 @@ export default function StoreAddressesPage() {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Alamat Toko</h1>
-            <p className="text-gray-600 mt-1">Temukan lokasi toko ConnectPrinting terdekat</p>
+            <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+              <MapPin className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold">Alamat Toko</h1>
+            <p className="text-blue-100 mt-2">Temukan lokasi toko ConnectPrinting terdekat</p>
           </div>
         </div>
       </div>
@@ -46,10 +49,12 @@ export default function StoreAddressesPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {activeStores.map((store) => (
-              <Card key={store.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-600">
-                    <MapPin className="h-5 w-5" />
+              <Card key={store.id} className="border-0 shadow-xl rounded-2xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-2xl">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                      <MapPin className="h-5 w-5" />
+                    </div>
                     {store.name}
                   </CardTitle>
                 </CardHeader>

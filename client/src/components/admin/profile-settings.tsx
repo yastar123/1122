@@ -215,14 +215,23 @@ export default function ProfileSettings() {
         />
       </div>
 
-      <Button
-        type="submit"
-        className="bg-brand-green hover:bg-brand-green-dark"
-        disabled={updateSettingsMutation.isPending}
-      >
-        <Save className="h-4 w-4 mr-2" />
-        {updateSettingsMutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
-      </Button>
+      <div className="flex justify-end pt-6 border-t border-gray-200">
+        <Button
+          type="submit"
+          className="bg-primary hover:bg-primary/90 text-white px-6 py-2"
+          disabled={updateSettingsMutation.isPending}
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {updateSettingsMutation.isPending ? (
+            <div className="flex items-center">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Menyimpan...
+            </div>
+          ) : (
+            "Simpan Perubahan"
+          )}
+        </Button>
+      </div>
     </form>
   );
 }

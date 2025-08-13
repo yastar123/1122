@@ -30,75 +30,94 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Left side - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-brand-green-light rounded-full flex items-center justify-center">
-              <Gift className="text-brand-green text-2xl" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-lg mx-auto px-6 py-8">
+          <div className="text-center">
+            <div className="w-12 h-12 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
+              <Gift className="w-6 h-6 text-white" />
             </div>
-            <CardTitle className="text-2xl">Admin Access</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="username">Email/Username</Label>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              Admin Login
+            </h1>
+            <p className="text-gray-600">
+              Masuk untuk mengakses dashboard admin
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Login Form */}
+      <div className="max-w-lg mx-auto px-6 py-8">
+        <Card className="shadow-sm border border-gray-200">
+          <CardContent className="p-6">
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                  Email/Username
+                </Label>
                 <Input
                   id="username"
                   type="text"
                   value={loginData.username}
                   onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
-                  placeholder="admin@gmail.com"
+                  placeholder="Masukkan email atau username"
+                  className="h-12 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>
               
-              <div>
-                <Label htmlFor="password">Password</Label>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
                   value={loginData.password}
                   onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                  placeholder="admin123"
+                  placeholder="Masukkan password"
+                  className="h-12 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>
               
               <Button
                 type="submit"
-                className="w-full bg-brand-green hover:bg-brand-green-dark"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-medium transition-colors"
                 disabled={loginMutation.isPending}
               >
-                {loginMutation.isPending ? "Masuk..." : "Masuk"}
+                {loginMutation.isPending ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Masuk...
+                  </div>
+                ) : (
+                  "Masuk"
+                )}
               </Button>
             </form>
             
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Login Default:</strong><br />
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-700">
+                <strong className="text-gray-900">Kredensial Default:</strong><br />
                 Email: admin@gmail.com<br />
                 Password: admin123
               </p>
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Right side - Hero */}
-      <div className="flex-1 bg-gradient-to-br from-brand-green to-brand-green-dark flex items-center justify-center p-8">
-        <div className="text-center text-white">
-          <Gift className="w-20 h-20 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-4">Sistem Undian Kupon</h2>
-          <p className="text-lg opacity-90 mb-8">
-            Kelola hadiah, peserta, dan pantau semua aktivitas undian dengan mudah
-          </p>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <p className="text-sm opacity-80">
-              Masuk dengan kredensial admin untuk mengakses dashboard manajemen undian
-            </p>
-          </div>
+        {/* Back to Home */}
+        <div className="mt-6 text-center">
+          <Button
+            variant="outline"
+            onClick={() => setLocation("/")}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            Kembali ke Beranda
+          </Button>
         </div>
       </div>
     </div>

@@ -17,6 +17,10 @@ Preferred communication style: Simple, everyday language.
 ✓ Added WhatsApp contact button that uses admin settings
 ✓ Fixed session configuration for production compatibility
 ✓ Enhanced UI components with proper styling and responsiveness
+✓ Added coupon number field to prizes table in admin dashboard
+✓ Updated coupon checking logic to match against prize coupon numbers
+✓ Implemented prize banner display when user wins a coupon check
+✓ Enhanced prize management with full CRUD for coupon numbers and banners
 
 ## System Architecture
 

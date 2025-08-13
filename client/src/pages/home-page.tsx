@@ -20,6 +20,7 @@ export default function HomePage() {
   const [result, setResult] = useState<{
     isWinner: boolean;
     prizeName?: string;
+    prizeBanner?: string;
     message: string;
   } | null>(null);
 
@@ -153,9 +154,21 @@ export default function HomePage() {
               {result.message}
             </p>
             {result.isWinner && result.prizeName && (
-              <p className="text-sm font-medium text-green-600 mt-2">
-                Hadiah: {result.prizeName}
-              </p>
+              <>
+                <p className="text-sm font-medium text-green-600 mt-2">
+                  Hadiah: {result.prizeName}
+                </p>
+                {result.prizeBanner && (
+                  <div className="mt-4 p-2 border-2 border-green-400 rounded-lg bg-green-50">
+                    <img 
+                      src={result.prizeBanner} 
+                      alt={`Hadiah ${result.prizeName}`}
+                      className="w-full h-40 object-cover rounded-lg"
+                      data-testid="img-prize-banner"
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

@@ -155,18 +155,25 @@ export function registerRoutes(app: Express): Server {
     try {
       const submissionData = insertSubmissionSchema.parse(req.body);
       
-      // Check if coupon exists in participants
-      const participant = await storage.getParticipantByCoupon(submissionData.couponNumber);
+      // Check if coupon exists as a prize coupon number
+      const prizes = await storage.getAllPrizes();
+      const matchingPrize = prizes.find(prize => 
+        prize.couponNumber === submissionData.couponNumber && 
+        prize.isActive &&
+        new Date() >= new Date(prize.startDate) &&
+        new Date() <= new Date(prize.endDate)
+      );
       
       let isWinner = false;
       let prizeId = null;
       let prizeName = null;
+      let prizeBanner = null;
       
-      if (participant && participant.isWinner && participant.prizeId) {
+      if (matchingPrize) {
         isWinner = true;
-        prizeId = participant.prizeId;
-        const prize = await storage.getPrize(participant.prizeId);
-        prizeName = prize?.name || null;
+        prizeId = matchingPrize.id;
+        prizeName = matchingPrize.name;
+        prizeBanner = matchingPrize.bannerUrl;
       }
       
       // Save submission to history
@@ -180,6 +187,7 @@ export function registerRoutes(app: Express): Server {
       res.json({
         isWinner,
         prizeName,
+        prizeBanner,
         message: isWinner 
           ? (await storage.getSettings())?.winnerMessage || "Selamat! Anda mendapat hadiah!"
           : "Maaf, nomor kupon Anda tidak mendapatkan hadiah kali ini."

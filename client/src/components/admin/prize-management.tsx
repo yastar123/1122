@@ -179,7 +179,7 @@ export default function PrizeManagement() {
         </div>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-brand-green hover:bg-brand-green-dark">
+            <Button className="bg-primary hover:bg-primary/90 text-white">
               <Plus className="h-4 w-4 mr-2" />
               Tambah Hadiah
             </Button>
@@ -302,21 +302,27 @@ export default function PrizeManagement() {
                 </div>
               </div>
               
-              <div className="flex gap-3">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="flex-1"
                 >
                   Batal
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-brand-green hover:bg-brand-green-dark"
+                  className="bg-primary hover:bg-primary/90 text-white px-6"
                   disabled={createPrizeMutation.isPending}
                 >
-                  {createPrizeMutation.isPending ? "Menambah..." : "Tambah Hadiah"}
+                  {createPrizeMutation.isPending ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Menambah...
+                    </div>
+                  ) : (
+                    "Tambah Hadiah"
+                  )}
                 </Button>
               </div>
             </form>

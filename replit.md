@@ -8,6 +8,16 @@ This is a full-stack web application for managing coupon lottery systems. The ap
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (August 13, 2025)
+
+✓ Successfully migrated from Replit Agent to Replit environment
+✓ Implemented new homepage layout with logo, banner, and simplified form inputs
+✓ Added placeholder text management system in admin dashboard  
+✓ Created submission history tracking for all coupon checks
+✓ Added WhatsApp contact button that uses admin settings
+✓ Fixed session configuration for production compatibility
+✓ Enhanced UI components with proper styling and responsiveness
+
 ## System Architecture
 
 ### Frontend Architecture

@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Cek Undian Kupon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-green': '#22c55e',
+                        'brand-green-dark': '#16a34a',
+                        'brand-green-light': '#dcfce7'
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- @COMPONENT: PublicCouponCheck [Main public interface for coupon verification] -->
+    <div id="publicInterface" class="min-h-screen">
+        
+        <!-- Header Section with Logo -->
+        <div class="bg-white shadow-sm">
+            <div class="max-w-md mx-auto p-6 text-center">
+                <!-- Logo placeholder - would be replaced with uploaded logo -->
+                <div class="w-20 h-20 mx-auto mb-4 bg-brand-green-light rounded-full flex items-center justify-center" data-mock="true" data-implementation="Replace with uploaded logo from admin dashboard">
+                    <i class="fas fa-gift text-brand-green text-2xl"></i>
+                </div>
+                <h1 class="text-xl font-semibold text-gray-800" data-bind="settings.title" data-mock="true">Cek Kupon Undian</h1>
+            </div>
+        </div>
+
+        <!-- Banner Section -->
+        <div class="max-w-md mx-auto px-6 mt-4">
+            <!-- Banner image placeholder - would be replaced with uploaded banner -->
+            <!-- Modern promotional banner with vibrant colors and gift boxes -->
+            <div class="relative h-32 rounded-lg overflow-hidden shadow-lg" data-mock-image="true" data-implementation="Replace with uploaded banner from admin dashboard">
+                <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=300" alt="Promotional banner" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-green/20 to-transparent"></div>
+            </div>
+        </div>
+
+        <!-- Main Coupon Check Form -->
+        <div class="max-w-md mx-auto px-6 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <form data-event="submit:handleCouponCheck" data-implementation="Should validate coupon against database and show results">
+                    
+                    <!-- Coupon Number Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Tulis Nomor kuponmu disini <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            placeholder="Masukkan nomor kupon"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                            data-bind="form.couponNumber"
+                            required
+                        />
+                    </div>
+
+                    <!-- Full Name Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            placeholder="Masukkan nama lengkap"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                            data-bind="form.fullName"
+                            required
+                        />
+                    </div>
+
+                    <!-- WhatsApp Number Input -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nomor Whatsapp <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            placeholder="Contoh: 08123456789"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                            data-bind="form.whatsappNumber"
+                            required
+                        />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit"
+                        class="w-full bg-brand-green hover:bg-brand-green-dark text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
+                        data-event="click:handleSubmit"
+                    >
+                        <!-- @STATE: isLoading:boolean = false -->
+                        <span data-bind="isLoading" class="hidden">
+                            <i class="fas fa-spinner animate-spin mr-2"></i>
+                            Mengecek...
+                        </span>
+                        <span data-bind="!isLoading">CEK</span>
+                    </button>
+                </form>
+
+                <!-- Success Message (conditionally shown) -->
+                <!-- @STATE: showResult:boolean = false, resultType:string = '' -->
+                <div data-bind="showResult && resultType === 'winner'" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg hidden">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                        <div>
+                            <h3 class="font-semibold text-green-800">Selamat!</h3>
+                            <p class="text-green-700 text-sm mt-1" data-bind="winnerMessage" data-mock="true">
+                                Anda mendapatkan hadiah dari ConnectPrinting, segera tukarkan :)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Prize Message (conditionally shown) -->
+                <div data-bind="showResult && resultType === 'no_prize'" class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg hidden">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-yellow-500 mr-3"></i>
+                        <div>
+                            <h3 class="font-semibold text-yellow-800">Maaf</h3>
+                            <p class="text-yellow-700 text-sm mt-1">Nomor kupon Anda tidak mendapatkan hadiah kali ini.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prize Display Section -->
+        <div class="max-w-md mx-auto px-6 pb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Hadiah Tersedia</h2>
+                <!-- Sample promotional products image -->
+                <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400" alt="Hadiah promosi produk tumbler dan merchandise" class="w-full h-40 object-cover rounded-lg mb-4" data-mock-image="true" />
+                
+                <!-- Terms and Conditions -->
+                <div class="text-sm text-gray-600 space-y-1" data-bind="termsAndConditions" data-mock="true">
+                    <h3 class="font-semibold text-gray-800 mb-2">Cara Klaim Hadiahmu*</h3>
+                    <p>Langkah - langkah:</p>
+                    <ol class="list-decimal ml-4 space-y-1">
+                        <li>Screenshot layar ini</li>
+                        <li>Datang ke ConnectPrinting</li>
+                        <li>Tunjukkan kupon fisik asli</li>
+                        <li>Hadiah bisa di ambil langsung</li>
+                        <li>Hadiah tidak bisa di kirim</li>
+                        <li>Berlaku s/d dokumentasi atlet GS Connect Printing</li>
+                        <li>Batas waktu klaim hadiah mulai 26 Agustus 22 – 7 September 22 09.00 – 16.30</li>
+                        <li>1 orang 1 hadiah</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Admin Button -->
+        <div class="max-w-md mx-auto px-6 pb-8">
+            <a href="#" data-bind="adminWhatsApp" data-event="click:openWhatsApp" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                <i class="fab fa-whatsapp mr-2 text-lg"></i>
+                Hubungi Admin
+            </a>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: PublicCouponCheck -->
+
+    <!-- Admin Login Modal -->
+    <!-- @COMPONENT: AdminLogin [Modal for admin authentication] -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Admin Login</h2>
+                        <p class="text-gray-600 mt-2">Masuk ke dashboard admin</p>
+                    </div>
+                    
+                    <form data-event="submit:handleAdminLogin">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input 
+                                type="email" 
+                                value="admin@gmail.com"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                required
+                            />
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <input 
+                                type="password" 
+                                value="admin123"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                required
+                            />
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button 
+                                type="button"
+                                data-event="click:closeLoginModal"
+                                class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200"
+                            >
+                                Batal
+                            </button>
+                            <button 
+                                type="submit"
+                                class="flex-1 bg-brand-green hover:bg-brand-green-dark text-white px-4 py-3 rounded-lg transition duration-200"
+                            >
+                                Masuk
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AdminLogin -->
+
+    <!-- Admin Dashboard -->
+    <!-- @COMPONENT: AdminDashboard [Main admin interface with sidebar navigation] -->
+    <div id="adminDashboard" class="hidden min-h-screen bg-gray-50">
+        
+        <!-- Sidebar Navigation -->
+        <div class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg">
+            <div class="p-6 border-b">
+                <h1 class="text-xl font-bold text-gray-800">Admin Dashboard</h1>
+                <p class="text-sm text-gray-600 mt-1">Sistem Undian Kupon</p>
+            </div>
+            
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <button data-event="click:showProfileSettings" class="w-full text-left px-4 py-2 rounded-lg hover:bg-brand-green-light hover:text-brand-green transition duration-200 flex items-center">
+                            <i class="fas fa-cog mr-3"></i>
+                            Pengaturan Profil
+                        </button>
+                    </li>
+                    <li>
+                        <button data-event="click:showPrizeManagement" class="w-full text-left px-4 py-2 rounded-lg hover:bg-brand-green-light hover:text-brand-green transition duration-200 flex items-center">
+                            <i class="fas fa-gift mr-3"></i>
+                            Kelola Hadiah
+                        </button>
+                    </li>
+                    <li>
+                        <button data-event="click:showParticipantManagement" class="w-full text-left px-4 py-2 rounded-lg hover:bg-brand-green-light hover:text-brand-green transition duration-200 flex items-center">
+                            <i class="fas fa-users mr-3"></i>
+                            Kelola Peserta
+                        </button>
+                    </li>
+                    <li>
+                        <button data-event="click:showSubmissionHistory" class="w-full text-left px-4 py-2 rounded-lg hover:bg-brand-green-light hover:text-brand-green transition duration-200 flex items-center">
+                            <i class="fas fa-history mr-3"></i>
+                            Riwayat Pengajuan
+                        </button>
+                    </li>
+                    <li class="pt-4 border-t">
+                        <button data-event="click:adminLogout" class="w-full text-left px-4 py-2 rounded-lg hover:bg-red-50 hover:text-red-600 transition duration-200 flex items-center">
+                            <i class="fas fa-sign-out-alt mr-3"></i>
+                            Keluar
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="ml-64 p-8">
+            
+            <!-- Profile Settings Panel -->
+            <!-- @COMPONENT: ProfileSettings [CRUD interface for main page settings] -->
+            <div id="profileSettings" class="admin-panel">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Pengaturan Profil</h2>
+                    <p class="text-gray-600">Kelola konten halaman utama dan pengaturan sistem</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <form data-event="submit:updateProfileSettings">
+                        
+                        <!-- Logo Upload -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Logo</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-green transition duration-200">
+                                <input type="file" accept="image/*" class="hidden" id="logoUpload" />
+                                <label for="logoUpload" class="cursor-pointer">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600">Klik untuk upload logo</p>
+                                    <p class="text-xs text-gray-500 mt-1">PNG, JPG maksimal 2MB</p>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Banner Upload -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Banner</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-green transition duration-200">
+                                <input type="file" accept="image/*" class="hidden" id="bannerUpload" />
+                                <label for="bannerUpload" class="cursor-pointer">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600">Klik untuk upload banner</p>
+                                    <p class="text-xs text-gray-500 mt-1">PNG, JPG maksimal 5MB</p>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Site Title -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Judul Website</label>
+                            <input 
+                                type="text" 
+                                value="Cek Kupon Undian"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                data-bind="settings.siteTitle"
+                            />
+                        </div>
+
+                        <!-- Admin WhatsApp -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Admin</label>
+                            <input 
+                                type="text" 
+                                placeholder="wa.me/62651465165651"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                data-bind="settings.adminWhatsApp"
+                            />
+                        </div>
+
+                        <!-- Maps Link -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Link Peta Lokasi</label>
+                            <input 
+                                type="url" 
+                                placeholder="http://maps/2152"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                data-bind="settings.mapsLink"
+                            />
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Syarat & Ketentuan</label>
+                            <textarea 
+                                rows="8"
+                                placeholder="Cara Klaim Hadiahmu..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                data-bind="settings.termsAndConditions"
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            class="bg-brand-green hover:bg-brand-green-dark text-white px-6 py-3 rounded-lg transition duration-200"
+                        >
+                            Simpan Perubahan
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ProfileSettings -->
+
+            <!-- Prize Management Panel -->
+            <!-- @COMPONENT: PrizeManagement [CRUD interface for managing prizes] -->
+            <div id="prizeManagement" class="admin-panel hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kelola Hadiah</h2>
+                        <p class="text-gray-600">Tambah, edit, dan hapus hadiah undian</p>
+                    </div>
+                    <button data-event="click:showCreatePrizeModal" class="bg-brand-green hover:bg-brand-green-dark text-white px-4 py-2 rounded-lg flex items-center transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Hadiah
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Hadiah</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Banner</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Selesai</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- @MAP: prizes.map(prize => ( -->
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="text" value="TUMBLR" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-brand-green-light rounded flex items-center justify-center mr-2">
+                                                <i class="fas fa-image text-brand-green"></i>
+                                            </div>
+                                            <button class="text-brand-green hover:text-brand-green-dark text-sm">Upload</button>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="datetime-local" value="2024-08-07T17:00" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="datetime-local" value="2024-08-31T17:00" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Aktif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex space-x-2">
+                                            <button data-event="click:editPrize" class="text-blue-600 hover:text-blue-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button data-event="click:deletePrize" class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                                
+                                <!-- Additional sample rows -->
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="text" value="Merchandise Set" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-brand-green-light rounded flex items-center justify-center mr-2">
+                                                <i class="fas fa-image text-brand-green"></i>
+                                            </div>
+                                            <button class="text-brand-green hover:text-brand-green-dark text-sm">Upload</button>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="datetime-local" value="2024-08-07T17:00" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="datetime-local" value="2024-08-31T17:00" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Aktif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex space-x-2">
+                                            <button data-event="click:editPrize" class="text-blue-600 hover:text-blue-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button data-event="click:deletePrize" class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: PrizeManagement -->
+
+            <!-- Participant Management Panel -->
+            <!-- @COMPONENT: ParticipantManagement [CRUD interface for managing participant IDs] -->
+            <div id="participantManagement" class="admin-panel hidden">
+                <div class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kelola Peserta</h2>
+                        <p class="text-gray-600">Tambah, edit ID peserta dan atur pemenang</p>
+                    </div>
+                    <button data-event="click:showCreateParticipantModal" class="bg-brand-green hover:bg-brand-green-dark text-white px-4 py-2 rounded-lg flex items-center transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah ID
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            placeholder="Cari berdasarkan ID, nama, atau WhatsApp..."
+                            class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                            data-bind="searchQuery"
+                        />
+                        <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Peserta</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Input</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pilih Hadiah</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- @MAP: participants.map(participant => ( -->
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="text" value="63165463" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="text" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" placeholder="Nama peserta" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="tel" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" placeholder="08123456789" />
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="datetime-local" class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" />
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <textarea class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none" rows="2" placeholder="Keterangan..."></textarea>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <select class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none">
+                                            <option>TUMBLR</option>
+                                            <option>Merchandise Set</option>
+                                            <option>Tidak ada hadiah</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex space-x-2">
+                                            <button data-event="click:saveParticipant" class="text-green-600 hover:text-green-900">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button data-event="click:editParticipant" class="text-blue-600 hover:text-blue-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button data-event="click:deleteParticipant" class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ParticipantManagement -->
+
+            <!-- Submission History Panel -->
+            <!-- @COMPONENT: SubmissionHistory [View all user submissions and results] -->
+            <div id="submissionHistory" class="admin-panel hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Riwayat Pengajuan</h2>
+                    <p class="text-gray-600">Lihat semua pengajuan cek kupon dari pengguna</p>
+                </div>
+
+                <!-- Filter and Search -->
+                <div class="mb-6 flex gap-4">
+                    <div class="flex-1">
+                        <input 
+                            type="text" 
+                            placeholder="Cari berdasarkan nama, nomor kupon, atau WhatsApp..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                        />
+                    </div>
+                    <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none">
+                        <option>Semua Status</option>
+                        <option>Menang</option>
+                        <option>Tidak Menang</option>
+                    </select>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Kupon</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hasil</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hadiah</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- @MAP: submissions.map(submission => ( -->
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        2024-01-15 14:30
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        63165463
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        John Doe
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        08123456789
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-trophy mr-1"></i>
+                                            Menang
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        TUMBLR
+                                    </td>
+                                </tr>
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        2024-01-15 13:15
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        12345678
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        Jane Smith
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        08987654321
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            <i class="fas fa-times mr-1"></i>
+                                            Tidak Menang
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        -
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: SubmissionHistory -->
+
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AdminDashboard -->
+
+    <!-- Create Prize Modal -->
+    <!-- @COMPONENT: CreatePrizeModal [Modal for adding new prizes] -->
+    <div id="createPrizeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Tambah Hadiah Baru</h2>
+                        <button data-event="click:closeCreatePrizeModal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <form data-event="submit:createPrize">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Hadiah</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Contoh: TUMBLR"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                    required
+                                />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Hadiah</label>
+                                <textarea 
+                                    rows="3"
+                                    placeholder="Deskripsi detail hadiah..."
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                ></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
+                                    <input 
+                                        type="datetime-local"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai</label>
+                                    <input 
+                                        type="datetime-local"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Banner Hadiah</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                    <input type="file" accept="image/*" class="hidden" id="prizeBannerUpload" />
+                                    <label for="prizeBannerUpload" class="cursor-pointer">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                        <p class="text-gray-600">Upload banner hadiah</p>
+                                        <p class="text-xs text-gray-500 mt-1">PNG, JPG maksimal 5MB</p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-6">
+                            <button 
+                                type="button"
+                                data-event="click:closeCreatePrizeModal"
+                                class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200"
+                            >
+                                Batal
+                            </button>
+                            <button 
+                                type="submit"
+                                class="flex-1 bg-brand-green hover:bg-brand-green-dark text-white px-4 py-3 rounded-lg transition duration-200"
+                            >
+                                Tambah Hadiah
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreatePrizeModal -->
+
+    <!-- Floating Admin Access Button (visible only on public interface) -->
+    <button 
+        id="adminAccessBtn" 
+        data-event="click:showAdminLogin"
+        class="fixed bottom-4 right-4 bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-full shadow-lg transition duration-200 z-40"
+        title="Admin Access"
+    >
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <script>
+        // TODO: Implement React component logic, Express API integration, and MongoDB operations
+        
+        (() => {
+            // Simple interface switching for demonstration
+            const publicInterface = document.getElementById('publicInterface');
+            const adminDashboard = document.getElementById('adminDashboard');
+            const adminLoginModal = document.getElementById('adminLoginModal');
+            const adminAccessBtn = document.getElementById('adminAccessBtn');
+            
+            // Admin panels
+            const profileSettings = document.getElementById('profileSettings');
+            const prizeManagement = document.getElementById('prizeManagement');
+            const participantManagement = document.getElementById('participantManagement');
+            const submissionHistory = document.getElementById('submissionHistory');
+            
+            // Modals
+            const createPrizeModal = document.getElementById('createPrizeModal');
+            
+            // State management would be handled by React in production
+            let currentView = 'public';
+            let currentAdminPanel = 'profile';
+            
+            // Show admin login modal
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-event*="showAdminLogin"]')) {
+                    adminLoginModal.classList.remove('hidden');
+                }
+            });
+            
+            // Close admin login modal
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-event*="closeLoginModal"]')) {
+                    adminLoginModal.classList.add('hidden');
+                }
+            });
+            
+            // Handle admin login
+            document.addEventListener('submit', (e) => {
+                if (e.target.closest('[data-event*="handleAdminLogin"]')) {
+                    e.preventDefault();
+                    // TODO: Implement actual authentication
+                    adminLoginModal.classList.add('hidden');
+                    publicInterface.classList.add('hidden');
+                    adminDashboard.classList.remove('hidden');
+                    adminAccessBtn.classList.add('hidden');
+                    currentView = 'admin';
+                }
+            });
+            
+            // Admin logout
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-event*="adminLogout"]')) {
+                    adminDashboard.classList.add('hidden');
+                    publicInterface.classList.remove('hidden');
+                    adminAccessBtn.classList.remove('hidden');
+                    currentView = 'public';
+                }
+            });
+            
+            // Admin panel navigation
+            document.addEventListener('click', (e) => {
+                // Hide all panels
+                const panels = [profileSettings, prizeManagement, participantManagement, submissionHistory];
+                panels.forEach(panel => panel.classList.add('hidden'));
+                
+                if (e.target.closest('[data-event*="showProfileSettings"]')) {
+                    profileSettings.classList.remove('hidden');
+                } else if (e.target.closest('[data-event*="showPrizeManagement"]')) {
+                    prizeManagement.classList.remove('hidden');
+                } else if (e.target.closest('[data-event*="showParticipantManagement"]')) {
+                    participantManagement.classList.remove('hidden');
+                } else if (e.target.closest('[data-event*="showSubmissionHistory"]')) {
+                    submissionHistory.classList.remove('hidden');
+                }
+            });
+            
+            // Modal controls
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-event*="showCreatePrizeModal"]')) {
+                    createPrizeModal.classList.remove('hidden');
+                } else if (e.target.closest('[data-event*="closeCreatePrizeModal"]')) {
+                    createPrizeModal.classList.add('hidden');
+                }
+            });
+            
+            // Form submissions - TODO: Implement actual logic
+            document.addEventListener('submit', (e) => {
+                if (e.target.closest('[data-event*="handleCouponCheck"]')) {
+                    e.preventDefault();
+                    // TODO: Validate coupon against database
+                    console.log('Coupon check submitted');
+                } else if (e.target.closest('[data-event*="updateProfileSettings"]')) {
+                    e.preventDefault();
+                    // TODO: Update settings in database
+                    console.log('Profile settings updated');
+                } else if (e.target.closest('[data-event*="createPrize"]')) {
+                    e.preventDefault();
+                    // TODO: Create new prize in database
+                    console.log('Prize created');
+                    createPrizeModal.classList.add('hidden');
+                }
+            });
+            
+            // File upload previews
+            document.addEventListener('change', (e) => {
+                if (e.target.type === 'file') {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // TODO: Implement file upload and preview
+                        console.log('File selected:', file.name);
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

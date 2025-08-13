@@ -13,6 +13,7 @@ export default function ProfileSettings() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     siteTitle: "",
+    siteSubtitle: "",
     logoUrl: "",
     bannerUrl: "",
     adminWhatsApp: "",
@@ -29,6 +30,7 @@ export default function ProfileSettings() {
     if (settings) {
       setFormData({
         siteTitle: settings.siteTitle || "",
+        siteSubtitle: settings.siteSubtitle || "",
         logoUrl: settings.logoUrl || "",
         bannerUrl: settings.bannerUrl || "",
         adminWhatsApp: settings.adminWhatsApp || "",
@@ -116,6 +118,18 @@ export default function ProfileSettings() {
           />
         </div>
 
+        <div>
+          <Label htmlFor="siteSubtitle">Subjudul Website</Label>
+          <Input
+            id="siteSubtitle"
+            value={formData.siteSubtitle}
+            onChange={(e) => setFormData(prev => ({ ...prev, siteSubtitle: e.target.value }))}
+            placeholder="Sistem Undian Kupon"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Label htmlFor="adminWhatsApp">WhatsApp Admin</Label>
           <Input

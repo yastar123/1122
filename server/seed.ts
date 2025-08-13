@@ -7,6 +7,7 @@ export async function seedData() {
     if (!existingSettings || !existingSettings.adminWhatsApp) {
       await storage.updateSettings({
         siteTitle: "Cek Kupon Undian",
+        siteSubtitle: "Sistem Undian Kupon",
         logoUrl: null,
         bannerUrl: null,
         adminWhatsApp: "6281234567890",

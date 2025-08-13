@@ -87,10 +87,10 @@ export default function HomePage() {
               </div>
             )}
             <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-              Cek Kupon Undian
+              {settings?.siteTitle || "Cek Kupon Undian"}
             </h1>
             <p className="text-gray-600">
-              {settings?.siteName || "Sistem Undian Kupon"}
+              {settings?.siteSubtitle || "Sistem Undian Kupon"}
             </p>
           </div>
         </div>

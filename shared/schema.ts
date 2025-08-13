@@ -14,6 +14,7 @@ export const users = pgTable("users", {
 export const settings = pgTable("settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   siteTitle: text("site_title").notNull().default("Cek Kupon Undian"),
+  siteSubtitle: text("site_subtitle").notNull().default("Sistem Undian Kupon"),
   logoUrl: text("logo_url"),
   bannerUrl: text("banner_url"),
   adminWhatsApp: text("admin_whatsapp"),

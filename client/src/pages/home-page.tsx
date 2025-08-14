@@ -290,18 +290,6 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
-
-      {/* Admin Access Button */}
-      <Link href="/auth">
-        <Button
-          size="icon"
-          className="fixed bottom-6 right-6 bg-gray-600 hover:bg-gray-700 shadow-lg"
-          title="Admin Access"
-          data-testid="button-admin-access"
-        >
-          <SettingsIcon className="h-4 w-4" />
-        </Button>
-      </Link>
     </div>
   );
 }

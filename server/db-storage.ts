@@ -1,6 +1,6 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
-import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import { eq, ilike, or } from "drizzle-orm";
 import { users, settings, prizes, participants, submissions, storeAddresses, productCatalog } from "@shared/schema";
 import type { User, InsertUser, Settings, InsertSettings, Prize, InsertPrize, Participant, InsertParticipant, Submission, InsertSubmission, StoreAddress, InsertStoreAddress, ProductCatalog, InsertProductCatalog } from "@shared/schema";
 import { randomUUID } from "crypto";
@@ -14,23 +14,33 @@ const PgSession = ConnectPgSimple(session);
 
 export class DatabaseStorage implements IStorage {
   private db;
+  private pool: Pool;
   public sessionStore: session.Store;
 
   constructor() {
-    const sql = neon(process.env.DATABASE_URL!);
-    this.db = drizzle(sql, { schema: { users, settings, prizes, participants, submissions, storeAddresses, productCatalog } });
+    // Use regular PostgreSQL instead of Neon
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
     
-    // Use PostgreSQL session store for production or memory store for development
-    if (process.env.NODE_ENV === "production" && process.env.DATABASE_URL) {
-      this.sessionStore = new PgSession({
-        conString: process.env.DATABASE_URL,
-        createTableIfMissing: true,
-      });
-    } else {
-      this.sessionStore = new MemoryStore({
-        checkPeriod: 86400000,
-      });
-    }
+    this.db = drizzle(this.pool, { 
+      schema: { 
+        users, 
+        settings, 
+        prizes, 
+        participants, 
+        submissions, 
+        storeAddresses, 
+        productCatalog 
+      } 
+    });
+    
+    // Use PostgreSQL session store
+    this.sessionStore = new PgSession({
+      pool: this.pool,
+      createTableIfMissing: true,
+      tableName: 'user_sessions'
+    });
   }
 
   // User methods
@@ -117,7 +127,7 @@ export class DatabaseStorage implements IStorage {
 
   async deletePrize(id: string): Promise<boolean> {
     const result = await this.db.delete(prizes).where(eq(prizes.id, id));
-    return result.rowCount > 0;
+    return (result as any).rowCount > 0;
   }
 
   // Participant methods
@@ -154,7 +164,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteParticipant(id: string): Promise<boolean> {
     const result = await this.db.delete(participants).where(eq(participants.id, id));
-    return result.rowCount > 0;
+    return (result as any).rowCount > 0;
   }
 
   // Submission methods
@@ -173,49 +183,81 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchSubmissions(query: string): Promise<Submission[]> {
-    // For now, return all submissions. Could be enhanced with filtering logic
-    return await this.getAllSubmissions();
+    return await this.db.select().from(submissions).where(
+      or(
+        ilike(submissions.fullName, `%${query}%`),
+        ilike(submissions.couponNumber, `%${query}%`),
+        ilike(submissions.whatsappNumber, `%${query}%`),
+        ilike(submissions.prizeName, `%${query}%`)
+      )
+    );
   }
 
-  // Store Address methods - placeholder implementations
+  // Store Address methods - NOW IMPLEMENTED
   async getAllStoreAddresses(): Promise<StoreAddress[]> {
-    return [];
+    return await this.db.select().from(storeAddresses);
   }
 
   async getStoreAddress(id: string): Promise<StoreAddress | undefined> {
-    return undefined;
+    const result = await this.db.select().from(storeAddresses).where(eq(storeAddresses.id, id));
+    return result[0];
   }
 
   async createStoreAddress(storeAddress: InsertStoreAddress): Promise<StoreAddress> {
-    throw new Error("Store address operations not yet implemented for database storage");
+    const newStoreAddress: StoreAddress = {
+      id: randomUUID(),
+      ...storeAddress,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await this.db.insert(storeAddresses).values(newStoreAddress);
+    return newStoreAddress;
   }
 
-  async updateStoreAddress(id: string, storeAddress: Partial<InsertStoreAddress>): Promise<StoreAddress> {
-    throw new Error("Store address operations not yet implemented for database storage");
+  async updateStoreAddress(id: string, storeAddressData: Partial<InsertStoreAddress>): Promise<StoreAddress> {
+    const updateData = { ...storeAddressData, updatedAt: new Date() };
+    await this.db.update(storeAddresses).set(updateData).where(eq(storeAddresses.id, id));
+    const updated = await this.getStoreAddress(id);
+    if (!updated) throw new Error("Store address not found");
+    return updated;
   }
 
   async deleteStoreAddress(id: string): Promise<boolean> {
-    return false;
+    const result = await this.db.delete(storeAddresses).where(eq(storeAddresses.id, id));
+    return (result as any).rowCount > 0;
   }
 
-  // Product Catalog methods - placeholder implementations
+  // Product Catalog methods - NOW IMPLEMENTED
   async getAllProducts(): Promise<ProductCatalog[]> {
-    return [];
+    return await this.db.select().from(productCatalog);
   }
 
   async getProduct(id: string): Promise<ProductCatalog | undefined> {
-    return undefined;
+    const result = await this.db.select().from(productCatalog).where(eq(productCatalog.id, id));
+    return result[0];
   }
 
   async createProduct(product: InsertProductCatalog): Promise<ProductCatalog> {
-    throw new Error("Product operations not yet implemented for database storage");
+    const newProduct: ProductCatalog = {
+      id: randomUUID(),
+      ...product,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await this.db.insert(productCatalog).values(newProduct);
+    return newProduct;
   }
 
-  async updateProduct(id: string, product: Partial<InsertProductCatalog>): Promise<ProductCatalog> {
-    throw new Error("Product operations not yet implemented for database storage");
+  async updateProduct(id: string, productData: Partial<InsertProductCatalog>): Promise<ProductCatalog> {
+    const updateData = { ...productData, updatedAt: new Date() };
+    await this.db.update(productCatalog).set(updateData).where(eq(productCatalog.id, id));
+    const updated = await this.getProduct(id);
+    if (!updated) throw new Error("Product not found");
+    return updated;
   }
 
   async deleteProduct(id: string): Promise<boolean> {
-    return false;
+    const result = await this.db.delete(productCatalog).where(eq(productCatalog.id, id));
+    return (result as any).rowCount > 0;
   }
 }

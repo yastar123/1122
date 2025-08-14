@@ -121,7 +121,7 @@ export default function HomePage() {
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="coupon-number" className="text-sm font-medium text-gray-700">
-                  Nomor Kupon
+                  Id
                 </Label>
                 <Input
                   id="coupon-number"
@@ -179,7 +179,7 @@ export default function HomePage() {
                     Mengecek...
                   </div>
                 ) : (
-                  "Cek Kupon"
+                  "Cek"
                 )}
               </Button>
             </form>

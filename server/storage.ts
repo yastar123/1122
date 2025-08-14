@@ -606,4 +606,11 @@ Langkah - langkah:
 
 import { DatabaseStorage } from "./db-storage";
 
-export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();
+// Force DATABASE_URL jika tidak ada
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "postgresql://postgres:EDUJUANDA12345@localhost:5432/coupon_lottery";
+  console.log("🔧 DATABASE_URL set manually");
+}
+
+console.log("🚀 Using DatabaseStorage with PostgreSQL");
+export const storage = new DatabaseStorage();

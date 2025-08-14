@@ -40,7 +40,8 @@ import { seedData } from "./seed";
 
 (async () => {
   // Seed database with initial data
-  await seedData();
+  
+await seedData();
   
   const server = await registerRoutes(app);
 

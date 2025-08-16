@@ -87,13 +87,29 @@ export class DatabaseStorage implements IStorage {
   async updateSettings(settingsData: InsertSettings): Promise<Settings> {
     const existing = await this.getSettings();
     if (existing) {
-      const updated = { ...settingsData, id: existing.id, updatedAt: new Date() };
+      const updated = { 
+        ...settingsData, 
+        id: existing.id, 
+        updatedAt: new Date(),
+        siteTitle: settingsData.siteTitle || existing.siteTitle,
+        siteSubtitle: settingsData.siteSubtitle || existing.siteSubtitle
+      };
       await this.db.update(settings).set(updated).where(eq(settings.id, existing.id));
       return updated as Settings;
     } else {
       const newSettings: Settings = {
         id: randomUUID(),
-        ...settingsData,
+        siteTitle: settingsData.siteTitle || "Cek Kupon Undian",
+        siteSubtitle: settingsData.siteSubtitle || "Sistem Undian Kupon",
+        logoUrl: settingsData.logoUrl || null,
+        bannerUrl: settingsData.bannerUrl || null,
+        adminWhatsApp: settingsData.adminWhatsApp || null,
+        mapsLink: settingsData.mapsLink || null,
+        termsAndConditions: settingsData.termsAndConditions || null,
+        winnerMessage: settingsData.winnerMessage || null,
+        couponPlaceholder: settingsData.couponPlaceholder || "Tulis Nomor kuponmu disini",
+        namePlaceholder: settingsData.namePlaceholder || "Nama Lengkap",
+        whatsappPlaceholder: settingsData.whatsappPlaceholder || "Nomor Whatsapp",
         updatedAt: new Date(),
       };
       await this.db.insert(settings).values(newSettings);
@@ -157,7 +173,14 @@ export class DatabaseStorage implements IStorage {
   async createParticipant(participant: InsertParticipant): Promise<Participant> {
     const newParticipant: Participant = {
       id: randomUUID(),
-      ...participant,
+      couponNumber: participant.couponNumber,
+      fullName: participant.fullName,
+      whatsappNumber: participant.whatsappNumber,
+      prizeId: participant.prizeId || null,
+      prizeName: participant.prizeName || null,
+      isWinner: participant.isWinner || null,
+      isPrizeClaimed: participant.isPrizeClaimed || null,
+      notes: participant.notes || null,
       createdAt: new Date(),
     };
     await this.db.insert(participants).values(newParticipant);
@@ -184,7 +207,12 @@ export class DatabaseStorage implements IStorage {
   async createSubmission(submission: InsertSubmission): Promise<Submission> {
     const newSubmission: Submission = {
       id: randomUUID(),
-      ...submission,
+      couponNumber: submission.couponNumber,
+      fullName: submission.fullName,
+      whatsappNumber: submission.whatsappNumber,
+      prizeId: submission.prizeId || null,
+      prizeName: submission.prizeName || null,
+      isWinner: submission.isWinner || null,
       submittedAt: new Date(),
     };
     await this.db.insert(submissions).values(newSubmission);
@@ -215,7 +243,13 @@ export class DatabaseStorage implements IStorage {
   async createStoreAddress(storeAddress: InsertStoreAddress): Promise<StoreAddress> {
     const newStoreAddress: StoreAddress = {
       id: randomUUID(),
-      ...storeAddress,
+      name: storeAddress.name,
+      address: storeAddress.address,
+      phone: storeAddress.phone || null,
+      whatsapp: storeAddress.whatsapp || null,
+      openingHours: storeAddress.openingHours || null,
+      mapsLink: storeAddress.mapsLink || null,
+      isActive: storeAddress.isActive || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -249,7 +283,13 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProductCatalog): Promise<ProductCatalog> {
     const newProduct: ProductCatalog = {
       id: randomUUID(),
-      ...product,
+      name: product.name,
+      description: product.description || null,
+      price: product.price || null,
+      imageUrl: product.imageUrl || null,
+      category: product.category || null,
+      isAvailable: product.isAvailable || null,
+      isActive: product.isActive || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

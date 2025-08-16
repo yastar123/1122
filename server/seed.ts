@@ -23,39 +23,6 @@ export async function seedData() {
 
     // Check if prizes already exist
     const existingPrizes = await storage.getAllPrizes();
-    if (existingPrizes.length === 0) {
-      await storage.createPrize({
-        name: "TUMBLR",
-        couponNumber: "TUM001",
-        description: "Tumblr cantik untuk hadiah juara",
-        bannerUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
-        startDate: new Date("2025-08-01"),
-        endDate: new Date("2025-12-31"),
-        isActive: true,
-      });
-
-      await storage.createPrize({
-        name: "HOODIE",
-        couponNumber: "HOO001",
-        description: "Hoodie premium berkualitas tinggi",
-        bannerUrl: "https://images.unsplash.com/photo-1556821840-3a9fbc0cd826?w=300&h=200&fit=crop",
-        startDate: new Date("2025-08-01"),
-        endDate: new Date("2025-12-31"),
-        isActive: true,
-      });
-
-      await storage.createPrize({
-        name: "TOTEBAG",
-        couponNumber: "TOT001",
-        description: "Totebag canvas premium untuk belanja",
-        bannerUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
-        startDate: new Date("2025-08-01"),
-        endDate: new Date("2025-12-31"),
-        isActive: true,
-      });
-
-      console.log("Prizes seeded successfully");
-    }
 
     // Create admin user if not exists
     const existingAdmin = await storage.getUserByUsername("admin");

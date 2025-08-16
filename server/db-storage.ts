@@ -69,6 +69,15 @@ export class DatabaseStorage implements IStorage {
     return newUser;
   }
 
+  async updateUserPassword(id: string, hashedPassword: string): Promise<boolean> {
+    try {
+      const result = await this.db.update(users).set({ password: hashedPassword }).where(eq(users.id, id));
+      return (result as any).rowCount > 0;
+    } catch (error) {
+      return false;
+    }
+  }
+
   // Settings methods
   async getSettings(): Promise<Settings | undefined> {
     const result = await this.db.select().from(settings).limit(1);

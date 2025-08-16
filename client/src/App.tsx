@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import HomePage from "@/pages/home-page";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AuthPage from "@/pages/auth-page";
+import ResetPasswordPage from "@/pages/reset-password-page";
 import NotFound from "@/pages/not-found";
 import StoreAddressesPage from "@/pages/store-addresses";
 import ProductCatalogPage from "@/pages/product-catalog";
@@ -24,6 +25,8 @@ function Router() {
         <Switch>
           <Route path="/" component={HomePage} />
           <Route path="/auth" component={AuthPage} />
+          <Route path="/login" component={AuthPage} />
+          <Route path="/reset-password" component={ResetPasswordPage} />
           <Route path="/alamat-toko" component={StoreAddressesPage} />
           <Route path="/katalog-produk" component={ProductCatalogPage} />
           <ProtectedRoute path="/admin" component={AdminDashboard} />

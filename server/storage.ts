@@ -13,6 +13,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserPassword(id: string, hashedPassword: string): Promise<boolean>;
   
   // Settings methods
   getSettings(): Promise<Settings | undefined>;
@@ -88,6 +89,7 @@ export class MemStorage implements IStorage {
     this.settings = {
       id: randomUUID(),
       siteTitle: "Cek Kupon Undian",
+      siteSubtitle: "Sistem Undian Kupon",
       logoUrl: null,
       bannerUrl: null,
       adminWhatsApp: "6281234567890",
@@ -269,6 +271,16 @@ Langkah - langkah:
     return user;
   }
 
+  async updateUserPassword(id: string, hashedPassword: string): Promise<boolean> {
+    const user = this.users.get(id);
+    if (!user) {
+      return false;
+    }
+    const updatedUser = { ...user, password: hashedPassword };
+    this.users.set(id, updatedUser);
+    return true;
+  }
+
   // Settings methods
   async getSettings(): Promise<Settings | undefined> {
     return this.settings || undefined;
@@ -278,6 +290,7 @@ Langkah - langkah:
     this.settings = {
       id: this.settings?.id || randomUUID(),
       siteTitle: newSettings.siteTitle || this.settings?.siteTitle || "Cek Kupon Undian",
+      siteSubtitle: newSettings.siteSubtitle || this.settings?.siteSubtitle || "Sistem Undian Kupon",
       logoUrl: newSettings.logoUrl !== undefined ? newSettings.logoUrl : this.settings?.logoUrl || null,
       bannerUrl: newSettings.bannerUrl !== undefined ? newSettings.bannerUrl : this.settings?.bannerUrl || null,
       adminWhatsApp: newSettings.adminWhatsApp !== undefined ? newSettings.adminWhatsApp : this.settings?.adminWhatsApp || null,

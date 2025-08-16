@@ -110,13 +110,6 @@ export default function AuthPage() {
               </Button>
             </div>
             
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-700">
-                <strong className="text-gray-900">Kredensial Default:</strong><br />
-                Email: admin@gmail.com<br />
-                Password: admin123
-              </p>
-            </div>
           </CardContent>
         </Card>
 

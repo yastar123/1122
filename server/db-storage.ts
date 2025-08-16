@@ -151,8 +151,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deletePrize(id: string): Promise<boolean> {
-    const result = await this.db.delete(prizes).where(eq(prizes.id, id));
-    return (result as any).rowCount > 0;
+    try {
+      // First, delete all participants referencing this prize
+      await this.db.delete(participants).where(eq(participants.prizeId, id));
+      
+      // Then, delete all submissions referencing this prize
+      await this.db.delete(submissions).where(eq(submissions.prizeId, id));
+      
+      // Finally, delete the prize itself
+      const result = await this.db.delete(prizes).where(eq(prizes.id, id));
+      return (result as any).rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting prize:', error);
+      return false;
+    }
   }
 
   // Participant methods

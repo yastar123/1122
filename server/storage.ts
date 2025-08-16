@@ -344,7 +344,31 @@ Langkah - langkah:
   }
 
   async deletePrize(id: string): Promise<boolean> {
-    return this.prizes.delete(id);
+    try {
+      // First, delete all participants referencing this prize
+      const participantsToDelete: string[] = [];
+      for (const [participantId, participant] of this.participants.entries()) {
+        if (participant.prizeId === id) {
+          participantsToDelete.push(participantId);
+        }
+      }
+      participantsToDelete.forEach(participantId => this.participants.delete(participantId));
+      
+      // Then, delete all submissions referencing this prize
+      const submissionsToDelete: string[] = [];
+      for (const [submissionId, submission] of this.submissions.entries()) {
+        if (submission.prizeId === id) {
+          submissionsToDelete.push(submissionId);
+        }
+      }
+      submissionsToDelete.forEach(submissionId => this.submissions.delete(submissionId));
+      
+      // Finally, delete the prize itself
+      return this.prizes.delete(id);
+    } catch (error) {
+      console.error('Error deleting prize:', error);
+      return false;
+    }
   }
 
   // Participant methods

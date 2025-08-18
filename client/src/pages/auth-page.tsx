@@ -11,8 +11,8 @@ export default function AuthPage() {
   const { user, loginMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [loginData, setLoginData] = useState({
-    username: "admin@gmail.com",
-    password: "admin123",
+    username: "",
+    password: "",
   });
 
   // Redirect if already logged in

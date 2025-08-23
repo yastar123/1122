@@ -18,9 +18,10 @@ export class DatabaseStorage implements IStorage {
   public sessionStore: session.Store;
 
   constructor() {
-    // Use regular PostgreSQL instead of Neon
+    // Use connection string from environment variable
     this.pool = new Pool({
       connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
     });
     
     this.db = drizzle(this.pool, { 
@@ -242,7 +243,7 @@ export class DatabaseStorage implements IStorage {
     );
   }
 
-  // Store Address methods - NOW IMPLEMENTED
+  // Store Address methods
   async getAllStoreAddresses(): Promise<StoreAddress[]> {
     return await this.db.select().from(storeAddresses);
   }
@@ -282,7 +283,7 @@ export class DatabaseStorage implements IStorage {
     return (result as any).rowCount > 0;
   }
 
-  // Product Catalog methods - NOW IMPLEMENTED
+  // Product Catalog methods
   async getAllProducts(): Promise<ProductCatalog[]> {
     return await this.db.select().from(productCatalog);
   }

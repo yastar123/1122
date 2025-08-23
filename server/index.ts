@@ -1,6 +1,14 @@
+import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
+
+console.log("🔍 Environment Debug:");
+console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
+console.log("DATABASE_URL =>", process.env.DATABASE_URL);
+console.log("NODE_ENV =>", process.env.NODE_ENV);
+
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));

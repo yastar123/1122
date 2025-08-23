@@ -645,7 +645,6 @@ import { DatabaseStorage } from "./db-storage";
 
 // Force DATABASE_URL jika tidak ada
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = "postgresql://postgres:EDUJUANDA12345@localhost:5432/coupon_lottery";
   console.log("🔧 DATABASE_URL set manually");
 }
 
